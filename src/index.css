@@ -1,0 +1,130 @@
+:root {
+  /* Renk Paleti */
+  --primary: #F05528;
+  /* Canlı Turuncu (Marka Rengi) */
+  --primary-light: #FFF0EB;
+  /* Çok açık turuncu (Arka planlar için) */
+  --bg-app: #F8F9FB;
+  /* Uygulama Arka Planı (Kirli Beyaz) */
+  --bg-card: #FFFFFF;
+  /* Kart Arka Planı */
+
+  --text-main: #111827;
+  /* Ana Metin (Neredeyse Siyah) */
+  --text-secondary: #6B7280;
+  /* İkincil Metin (Gri) */
+  --text-caption: #9CA3AF;
+  /* Soluk Metin */
+
+  --border-light: #E5E7EB;
+  /* Hafif Çizgiler */
+
+  /* Rozetler (Tags) */
+  --tag-red-bg: #FEF2F2;
+  --tag-red-text: #EF4444;
+  --tag-green-bg: #F0FDF4;
+  --tag-green-text: #16A34A;
+  --tag-orange-bg: #FFF7ED;
+  --tag-orange-text: #EA580C;
+
+  /* Düzen */
+  --mobile-width: 480px;
+  --radius-lg: 20px;
+  --radius-md: 12px;
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+
+  /* Font */
+  --font-main: 'Plus Jakarta Sans', sans-serif;
+}
+
+/* Koyu Mod Override */
+.dark-mode {
+  --primary-light: #2C1814;
+  --bg-app: #111827;
+  --bg-card: #1F2937;
+  --text-main: #F9FAFB;
+  --text-secondary: #9CA3AF;
+  --text-caption: #6B7280;
+  --border-light: #374151;
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
+  --tag-red-bg: #451a1a;
+  --tag-green-bg: #143320;
+  --tag-orange-bg: #3c2415;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: #E0E0E0;
+  /* Desktop'ta mobil görünümü vurgulamak için gri */
+  font-family: var(--font-main);
+  color: var(--text-main);
+  display: flex;
+  justify-content: center;
+  min-height: 100vh;
+}
+
+#root {
+  width: 100%;
+  max-width: var(--mobile-width);
+  background-color: var(--bg-app);
+  min-height: 100vh;
+  box-shadow: 0 0 50px rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Scrollbar yok etme (Mobil hissi için) */
+::-webkit-scrollbar {
+  width: 0px;
+  background: transparent;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+/* Ortak Utility Sınıfları */
+.container {
+  padding: 0 20px;
+}
+
+.title-lg {
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.subtitle {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.text-sm {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
