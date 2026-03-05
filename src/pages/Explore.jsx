@@ -19,8 +19,8 @@ const Explore = () => {
         return matchesCategory && matchesSearch;
     });
 
-    // Kategorileri filtrele (Kullanıcı isteği: Türk, Japon, Meksika gizlensin - İtalyan artık açık)
-    const hiddenCategories = ['tr', 'jp', 'mx'];
+    // Kategorileri filtrele (Türk, Meksika gizlensin - İtalyan ve Japon artık açık)
+    const hiddenCategories = ['tr', 'mx'];
     const displayCategories = categories.filter(c => !hiddenCategories.includes(c.id));
 
     return (
