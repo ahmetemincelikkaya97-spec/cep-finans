@@ -5243,5 +5243,83 @@ export const recipes = [
             "Önceden ısıtılmış 180°C fırına koyup peynirler tamamen eriyene kadar 15 dakika pişirin. Sıcak servis yapın."
         ],
         tips: "PÜF NOKTALARI: Tortillalar kuruysa sararken kolayca kırılır, sarmadan önce hafifçe tavada ısıtmak esneklik kazandırır. Hazırladığınız enchilada sosu aşırı koyu olursa biraz sıcak su/tavuk suyu ekleyerek açabilirsiniz. Tortillaların kuruyup sertleşmemesi için fırında 15 dakikadan fazla tutmayın. Doğru sonuç: Tortillalar yumuşak, sosu tatminkar yoğunlukta ve üzerindeki peynir tamamen erimiş olmalıdır."
+    },
+    {
+        id: 807,
+        title: "Chili con Carne (Geleneksel Etli Fasulye)",
+        category: "mx",
+        isTraditional: true,
+        image: "/images/Chili_con_Carne.png",
+        time: "1 sa 40 dk",
+        level: "Orta",
+        rating: 4.8,
+        calories: "450 kcal",
+        description: "Geleneksel etli ve kırmızı fasulyeli, hafif acılı, yoğun kıvamlı meksika klasiği.",
+        tags: ["Meksika", "Chili", "Et", "Geleneksel"],
+        servings: "4 kişilik",
+        ingredients: [
+            { name: "Dana Kıyma (%15 yağlı)", amount: "500 g", icon: "🥩" },
+            { name: "Sıvı Yağ", amount: "2 yemek kaşığı", icon: "🌻" },
+            { name: "Kuru Soğan", amount: "1 adet (büyük)", icon: "🧅" },
+            { name: "Sarımsak", amount: "4 diş", icon: "🧄" },
+            { name: "Kırmızı Kapya Biber", amount: "1 adet", icon: "🌶️" },
+            { name: "Yeşil Dolmalık Biber", amount: "1 adet", icon: "🫑" },
+            { name: "Domates Rendesi", amount: "400 g", icon: "🍅" },
+            { name: "Domates Salçası", amount: "2 yemek kaşığı", icon: "🥫" },
+            { name: "Haşlanmış Kırmızı Fasulye", amount: "240 g", icon: "🫘" },
+            { name: "Et Suyu", amount: "250 ml", icon: "🥣" },
+            { name: "Kimyon", amount: "2 çay kaşığı", icon: "🧂" },
+            { name: "Toz Kırmızı Biber", amount: "2 çay kaşığı", icon: "🌶️" },
+            { name: "Füme Paprika", amount: "1 çay kaşığı", icon: "🧂" },
+            { name: "Kekik", amount: "1 çay kaşığı", icon: "🌿" },
+            { name: "Tuz", amount: "1 çay kaşığı", icon: "🧂" },
+            { name: "Karabiber", amount: "1/2 çay kaşığı", icon: "🧂" },
+            { name: "Küçük Acı Biber (İsteğe bağlı)", amount: "1 adet", icon: "🌶️" }
+        ],
+        steps: [
+            "KESİM: Soğanı kök kısmını bırakarak küçük küp doğrayın. Sarımsağı ezip çok ince doğrayın. Biberlerin çekirdeklerini çıkarıp soğan boyutunda küçük küp doğrayın.",
+            "TENCERE ISITMA: Tencereyi orta-yüksek ateşte 2 dakika boş ısıtın. Yağı ekleyip 30 saniye yağın akışkan olmasını bekleyin.",
+            "SEBZE SOTE: Soğanı ekleyip 4 dakika kavurun (şeffaflaşmalı, kahverengi olmamalı). Sarımsağı ekleyip yanmasına izin vermeden 30 saniye karıştırın. Biberleri ekleyip 5 dakika daha pişirin.",
+            "ET PİŞİRME: Kıymayı ekleyin, tahta kaşıkla bastırarak ayırın. Pembe renk kalmayıp suyunu çekip hafif kızarana kadar 7-8 dakika pişirin.",
+            "SOSLAMA: Salçayı ekleyip çiğ kokusu gidene kadar 2 dakika kavurun. Ardından domates rendesi, baharatlar ve et suyunu ilave edin. Kaynayana kadar yüksek ateşte karıştırın.",
+            "PİŞİRME: Kaynadığında kısık ateşe alıp kapağı yarım kapatın. Dip tutmaması için her 10 dakikada bir karıştırarak 40 dakika pişirin.",
+            "FASULYE EKLEME: Fasulyeyi ekleyin ve 15 dakika daha pişirin. Kıvamı sulu çorba gibi değil, kaşığın arkasını kaplayacak yoğunlukta olmalıdır.",
+            "SERVİS: Üzerine taze kişniş, ekşi krema ve lime; yanına Mexican Rice ile sıcak servis yapın."
+        ],
+        tips: "PÜF NOKTALARI: Kıymayı kalabalık tavaya atarsanız sulanır. Salçayı kavurmadan geçmeyin. Fazla suluysa kapağı açık kaynatın, fazla koyuysa sıcak su ekleyin. Soğanlar büyük doğranırsa sosun içinde erimez."
+    },
+    {
+        id: 808,
+        title: "Guacamole",
+        category: "mx",
+        isTraditional: true,
+        image: "/images/Guacamole.png",
+        time: "10 dk",
+        level: "Kolay",
+        rating: 4.9,
+        calories: "160 kcal",
+        description: "Taze avokado, lime ve kişnişin eşsiz uyumuyla hazırlanan efsanevi Meksika sosu.",
+        tags: ["Meksika", "Sos", "Vegan", "Pratik"],
+        servings: "2-4 kişilik",
+        ingredients: [
+            { name: "Olgun Avokado", amount: "2 adet", icon: "🥑" },
+            { name: "Küçük Soğan", amount: "1/2 adet", icon: "🧅" },
+            { name: "Domates", amount: "1 adet", icon: "🍅" },
+            { name: "Lime", amount: "1 adet", icon: "🍋" },
+            { name: "Küçük Jalapeno Biberi", amount: "1 adet", icon: "🌶️" },
+            { name: "Taze Kişniş", amount: "2 yemek kaşığı", icon: "🌿" },
+            { name: "Tuz", amount: "1 çay kaşığı", icon: "🧂" }
+        ],
+        steps: [
+            "AVOKADO KONTROLÜ: Parmağınızla hafifçe bastırın. Yumuşak olmalı ama içine çökmemeli.",
+            "KESİM: Ortadan uzunlamasına kesin. Bıçağı çekirdeğe vurup çevirerek çıkarın. Kaşıkla içini alıp kaseye koyun.",
+            "SOĞAN: Çok küçük küpler halinde doğrayın. Ne kadar küçük olursa o kadar iyi.",
+            "DOMATES: Fazla su bırakmaması için ortasını ve çekirdeklerini çıkarın. Küçük küp şeklinde doğrayın.",
+            "JALAPENO: İnce ince doğrayın. (Eldiven kullanmanız ve sonrasında gözünüze dokunmamanız önerilir.)",
+            "YAPIM: Avokadoyu çatalla ezin ancak tam püre yapmayın, biraz parçalı kalsın (bu önemlidir).",
+            "BİRLEŞTİRME: Ezilmiş avokadoya soğanı, domatesi, jalapenoyu ve kişnişi ekleyin. Üzerine lime sıkıp tuzu ekleyerek hafifçe karıştırın.",
+            "KIVAM: Doğru kıvam akışkan veya katı püre değil, hafif parçalı ve sürülebilir bir yoğunlukta olmalıdır."
+        ],
+        tips: "PÜF NOKTASI: Lime suyunu erken eklerseniz avokadonun kararmasını azaltır."
     }
 ];
