@@ -3,11 +3,16 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { recipes } from '../data/recipes';
 import { useAuth } from '../context/AuthContext';
 import { ArrowLeft, Share2, Heart, Clock, Flame, ChefHat, PlayCircle, Bookmark, Star, Send, User } from 'lucide-react';
+import { useTranslation } from '../translations';
 
 const RecipeDetail = () => {
     const { id } = useParams();
     const navigate = useNavigate();
     const { user, toggleSave, toggleFavorite, addToHistory, addReview } = useAuth();
+
+    // get lang from user or localStorage
+    const language = user?.preferences?.language || localStorage.getItem('guest_lang') || 'tr';
+    const t = useTranslation(language);
 
     // Local state for review form
     const [rating, setRating] = useState(5);
@@ -46,7 +51,7 @@ const RecipeDetail = () => {
         }
     }, [id, recipe]);
 
-    if (!recipe) return <div className="container">Tarif bulunamadı.</div>;
+    if (!recipe) return <div className="container">{t('recipe_not_found')}</div>;
 
     const isSaved = user?.saved?.includes(recipe.id);
     const isFav = user?.favorites?.includes(recipe.id);
@@ -56,13 +61,13 @@ const RecipeDetail = () => {
 
     // Combine reviews: User's review first (if exists), then mock reviews
     const allReviews = userReview
-        ? [{ ...userReview, name: user.name || "Sen", isUser: true }, ...mockReviews]
+        ? [{ ...userReview, name: user.name || (language === 'en' ? "You" : "Sen"), isUser: true }, ...mockReviews]
         : mockReviews;
 
 
     const handleAction = (action) => {
         if (!user) {
-            alert("Bu işlemi yapmak için giriş yapmalısınız.");
+            alert(language === 'en' ? "You must be logged in to perform this action." : "Bu işlemi yapmak için giriş yapmalısınız.");
             return;
         }
         action();
@@ -123,7 +128,7 @@ const RecipeDetail = () => {
                     <div style={{ textAlign: 'center' }}>
                         <Clock size={20} color="var(--primary)" style={{ marginBottom: 4 }} />
                         <div style={{ fontSize: '14px', fontWeight: 700 }}>{recipe.time}</div>
-                        <div style={{ fontSize: '10px', color: 'var(--text-secondary)' }}>Hazırlık</div>
+                        <div style={{ fontSize: '10px', color: 'var(--text-secondary)' }}>{t('preparation')}</div>
                     </div>
                     <div style={{ textAlign: 'center' }}>
                         <div style={{ width: 1, height: '100%', background: 'var(--border-light)' }}></div>
@@ -131,7 +136,7 @@ const RecipeDetail = () => {
                     <div style={{ textAlign: 'center' }}>
                         <ChefHat size={20} color="var(--primary)" style={{ marginBottom: 4 }} />
                         <div style={{ fontSize: '14px', fontWeight: 700 }}>{recipe.level}</div>
-                        <div style={{ fontSize: '10px', color: 'var(--text-secondary)' }}>Zorluk</div>
+                        <div style={{ fontSize: '10px', color: 'var(--text-secondary)' }}>{t('level')}</div>
                     </div>
                     <div style={{ textAlign: 'center' }}>
                         <div style={{ width: 1, height: '100%', background: 'var(--border-light)' }}></div>
@@ -139,7 +144,7 @@ const RecipeDetail = () => {
                     <div style={{ textAlign: 'center' }}>
                         <Flame size={20} color="var(--primary)" style={{ marginBottom: 4 }} />
                         <div style={{ fontSize: '14px', fontWeight: 700 }}>{recipe.calories}</div>
-                        <div style={{ fontSize: '10px', color: 'var(--text-secondary)' }}>Enerji</div>
+                        <div style={{ fontSize: '10px', color: 'var(--text-secondary)' }}>{t('energy')}</div>
                     </div>
                 </div>
             </div>
@@ -151,7 +156,7 @@ const RecipeDetail = () => {
                     display: 'inline-block', padding: '4px 8px', borderRadius: '4px',
                     fontSize: '10px', fontWeight: 800, textTransform: 'uppercase', marginBottom: '8px'
                 }}>
-                    {recipe.isModern ? 'Modern' : 'Geleneksel'}
+                    {recipe.isModern ? t('modern') : t('classic')}
                 </div>
                 <h1 style={{ fontSize: '28px', fontWeight: 800, lineHeight: 1.2, marginBottom: '12px', color: 'var(--text-main)' }}>
                     {recipe.title}
@@ -166,19 +171,19 @@ const RecipeDetail = () => {
                     padding: '16px', borderRadius: '0 12px 12px 0'
                 }}>
                     <div style={{ color: 'var(--primary)', fontWeight: 800, fontSize: '12px', textTransform: 'uppercase', marginBottom: '4px' }}>
-                        Şefin Teknik Önerisi
+                        {t('chef_tip')}
                     </div>
                     <div style={{ fontSize: '14px', color: 'var(--tag-red-text)' }}>
-                        {recipe.tips || "Otantik bir lezzet için malzemelerin taze olmasına özen gösterin."}
+                        {recipe.tips || (language === 'en' ? "Ensure ingredients are fresh for authentic taste." : "Otantik bir lezzet için malzemelerin taze olmasına özen gösterin.")}
                     </div>
                 </div>
 
                 {/* Ingredients */}
                 <div style={{ marginTop: '32px' }}>
                     <div className="flex-between" style={{ marginBottom: '16px' }}>
-                        <h3 className="title-lg" style={{ fontSize: '20px', color: 'var(--text-main)' }}>Malzemeler</h3>
+                        <h3 className="title-lg" style={{ fontSize: '20px', color: 'var(--text-main)' }}>{t('ingredients')}</h3>
                         <div style={{ fontSize: '12px', color: 'var(--primary)', background: 'var(--primary-light)', padding: '4px 8px', borderRadius: '4px' }}>
-                            2 Kişilik
+                            {t('for_two')}
                         </div>
                     </div>
 
@@ -200,7 +205,7 @@ const RecipeDetail = () => {
 
                 {/* Steps */}
                 <div style={{ marginTop: '32px' }}>
-                    <h3 className="title-lg" style={{ fontSize: '20px', marginBottom: '16px', color: 'var(--text-main)' }}>Adım Adım</h3>
+                    <h3 className="title-lg" style={{ fontSize: '20px', marginBottom: '16px', color: 'var(--text-main)' }}>{t('steps')}</h3>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
                         {recipe.steps && recipe.steps.map((step, idx) => (
                             <div key={idx} style={{ display: 'flex', gap: '16px' }}>
@@ -213,7 +218,7 @@ const RecipeDetail = () => {
                                     {idx + 1}
                                 </div>
                                 <div>
-                                    <h4 style={{ fontWeight: 700, marginBottom: '4px', color: 'var(--text-main)' }}>Adım {idx + 1}</h4>
+                                    <h4 style={{ fontWeight: 700, marginBottom: '4px', color: 'var(--text-main)' }}>{t('step_word')} {idx + 1}</h4>
                                     <p style={{ color: 'var(--text-secondary)', fontSize: '15px' }}>{step}</p>
                                 </div>
                             </div>
@@ -223,12 +228,12 @@ const RecipeDetail = () => {
 
                 {/* Review Section */}
                 <div style={{ marginTop: '40px', paddingBottom: '20px' }}>
-                    <h3 className="title-lg" style={{ fontSize: '20px', marginBottom: '16px', color: 'var(--text-main)' }}>Değerlendirmeler</h3>
+                    <h3 className="title-lg" style={{ fontSize: '20px', marginBottom: '16px', color: 'var(--text-main)' }}>{t('reviews')}</h3>
 
                     {/* Review Form - Only show if user hasn't reviewed yet */}
                     {!userReview && (
                         <div style={{ backgroundColor: 'var(--bg-card)', padding: '20px', borderRadius: '16px', marginBottom: '24px' }}>
-                            <h4 style={{ fontSize: '16px', fontWeight: 700, marginBottom: '12px', color: 'var(--text-main)' }}>Bu tarifi nasıl buldun?</h4>
+                            <h4 style={{ fontSize: '16px', fontWeight: 700, marginBottom: '12px', color: 'var(--text-main)' }}>{t('add_review')}</h4>
                             <div style={{ display: 'flex', gap: '8px', marginBottom: '16px' }}>
                                 {[1, 2, 3, 4, 5].map((star) => (
                                     <button key={star} onClick={() => setRating(star)}>
@@ -244,7 +249,7 @@ const RecipeDetail = () => {
                                 <textarea
                                     value={comment}
                                     onChange={(e) => setComment(e.target.value)}
-                                    placeholder="Deneyimini paylaş..."
+                                    placeholder={t('leave_comment')}
                                     style={{
                                         width: '100%', padding: '12px', borderRadius: '12px',
                                         border: '1px solid var(--border-light)', marginBottom: '12px',
@@ -258,7 +263,7 @@ const RecipeDetail = () => {
                                     fontWeight: 700, fontSize: '14px', border: 'none',
                                     display: 'flex', alignItems: 'center', gap: '8px'
                                 }}>
-                                    Yorumu Gönder <Send size={16} />
+                                    {t('submit')} <Send size={16} />
                                 </button>
                             </form>
                         </div>
@@ -287,7 +292,7 @@ const RecipeDetail = () => {
                                                 {rev.name}
                                             </div>
                                             <div style={{ fontSize: '10px', color: 'var(--text-secondary)' }}>
-                                                {rev.date || 'Bugün'}
+                                                {rev.date || (language === 'en' ? 'Today' : 'Bugün')}
                                             </div>
                                         </div>
                                     </div>
@@ -321,7 +326,7 @@ const RecipeDetail = () => {
                         boxShadow: '0 10px 25px rgba(240, 85, 40, 0.4)'
                     }}>
                     <PlayCircle size={20} fill="white" color="var(--primary)" />
-                    Pişirmeye Başla
+                    {t('start_cooking')}
                 </button>
             </div>
         </div>

@@ -11,6 +11,8 @@ import Settings from './pages/Settings';
 import { SavedRecipes, Favorites, CookingHistory, MyReviews } from './pages/UserPages';
 import { Privacy, Terms, About } from './pages/InfoPages';
 import CookingMode from './pages/CookingMode';
+import SplashScreen from './components/SplashScreen';
+import { AnimatePresence } from 'framer-motion';
 
 // Wrapper for scrolling to top
 const ScrollToTop = () => {
@@ -22,6 +24,8 @@ const ScrollToTop = () => {
 }
 
 const App = () => {
+  const [showSplash, setShowSplash] = React.useState(true);
+
   // Theme Initialization
   useEffect(() => {
     const savedTheme = localStorage.getItem('theme');
@@ -32,10 +36,19 @@ const App = () => {
     } else {
       document.body.classList.remove('dark-mode');
     }
+
+    const timer = setTimeout(() => {
+      setShowSplash(false);
+    }, 2500);
+
+    return () => clearTimeout(timer);
   }, []);
 
   return (
     <AuthProvider>
+      <AnimatePresence>
+        {showSplash && <SplashScreen key="splash" />}
+      </AnimatePresence>
       <Router>
         <ScrollToTop />
         <div style={{ paddingBottom: '70px' }}> {/* Bottom Nav Spacer */}

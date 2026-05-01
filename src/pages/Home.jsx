@@ -4,11 +4,16 @@ import { recipes } from '../data/recipes';
 import RecipeCard from '../components/RecipeCard';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useTranslation } from '../translations';
 
 const Home = () => {
     const navigate = useNavigate();
     const { user } = useAuth();
     const [searchQuery, setSearchQuery] = useState("");
+
+    // get lang from user or localStorage
+    const language = user?.preferences?.language || localStorage.getItem('guest_lang') || 'tr';
+    const t = useTranslation(language);
 
     // 1. Günün Menüsü Mantığı: Tarihe göre 3 tarif seçer.
     const dailyMenu = useMemo(() => {
@@ -71,10 +76,10 @@ const Home = () => {
                         </div>
                         <div>
                             <div style={{ fontSize: '13px', color: 'var(--text-secondary)', fontWeight: 600 }}>
-                                HOŞ GELDİN ŞEF 👋
+                                {t('welcome_chef')}
                             </div>
                             <div style={{ fontSize: '20px', fontWeight: 800, color: 'var(--text-main)', letterSpacing: '-0.5px' }}>
-                                Günaydın, {user?.name || 'Misafir'}!
+                                {t('good_morning')} {user?.name || t('guest')}!
                             </div>
                         </div>
                     </div>
@@ -100,7 +105,7 @@ const Home = () => {
                     <Search size={22} color="var(--primary)" />
                     <input
                         type="text"
-                        placeholder="Bugün ne pişirmek istersin?"
+                        placeholder={t('search_placeholder')}
                         style={{
                             border: 'none', outline: 'none', width: '100%', fontSize: '15px',
                             fontWeight: 500, color: 'var(--text-main)', backgroundColor: 'transparent'
@@ -141,7 +146,7 @@ const Home = () => {
                             ))
                         ) : (
                             <div style={{ padding: '16px', color: 'var(--text-secondary)', textAlign: 'center', fontSize: '14px' }}>
-                                Tarif bulunamadı.
+                                {t('recipe_not_found')}
                             </div>
                         )}
                     </div>
@@ -153,7 +158,7 @@ const Home = () => {
                 <div className="flex-between" style={{ marginBottom: '16px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                         <Sparkles size={20} color="var(--primary)" fill="var(--primary)" />
-                        <h2 className="title-lg" style={{ fontSize: '18px', margin: 0 }}>Günün Menüsü</h2>
+                        <h2 className="title-lg" style={{ fontSize: '18px', margin: 0 }}>{t('daily_menu')}</h2>
                     </div>
                 </div>
 
@@ -213,10 +218,10 @@ const Home = () => {
                     }}>
                         <div>
                             <h3 style={{ color: 'white', fontSize: '18px', fontWeight: 800, marginBottom: '6px' }}>
-                                Yeni Lezzetler Keşfet
+                                {t('discover_new_tastes')}
                             </h3>
                             <p style={{ color: 'rgba(255,255,255,0.9)', fontSize: '13px', maxWidth: '180px' }}>
-                                Bugün mutfağında harikalar yaratmaya ne dersin?
+                                {t('create_wonders')}
                             </p>
                         </div>
                         <div style={{
@@ -232,8 +237,8 @@ const Home = () => {
             {/* Section: Türk Mutfağı */}
             <div style={{ marginTop: '32px' }}>
                 <div className="container flex-between" style={{ marginBottom: '16px' }}>
-                    <h2 className="title-lg" style={{ fontSize: '18px' }}>Türk Mutfağı</h2>
-                    <Link to="/explore" style={{ color: 'var(--primary)', fontWeight: 600, fontSize: '13px', textDecoration: 'none' }}>Tümü</Link>
+                    <h2 className="title-lg" style={{ fontSize: '18px' }}>{t('turkish_cuisine')}</h2>
+                    <Link to="/explore" style={{ color: 'var(--primary)', fontWeight: 600, fontSize: '13px', textDecoration: 'none' }}>{t('see_all')}</Link>
                 </div>
                 <div style={{
                     display: 'flex', overflowX: 'auto', gap: '16px', padding: '0 20px 20px 20px',
@@ -251,8 +256,8 @@ const Home = () => {
                 {worldCuisines.length > 0 && (
                     <div style={{ marginTop: '0px' }}>
                         <div className="container flex-between" style={{ marginBottom: '16px' }}>
-                            <h2 className="title-lg" style={{ fontSize: '18px' }}>Dünya Mutfağı</h2>
-                            <Link to="/category/world" style={{ color: 'var(--primary)', fontWeight: 600, fontSize: '13px', textDecoration: 'none' }}>Tümü</Link>
+                            <h2 className="title-lg" style={{ fontSize: '18px' }}>{t('world_cuisine')}</h2>
+                            <Link to="/category/world" style={{ color: 'var(--primary)', fontWeight: 600, fontSize: '13px', textDecoration: 'none' }}>{t('see_all')}</Link>
                         </div>
                         <div style={{
                             display: 'flex', overflowX: 'auto', gap: '16px', padding: '0 20px 20px 20px',
@@ -272,7 +277,7 @@ const Home = () => {
                 {/* Section: Popüler Tarifler */}
                 <div style={{ marginTop: '10px' }}>
                     <div className="container flex-between" style={{ marginBottom: '16px' }}>
-                        <h2 className="title-lg" style={{ fontSize: '18px' }}>En Popülerler</h2>
+                        <h2 className="title-lg" style={{ fontSize: '18px' }}>{t('popular_recipes')}</h2>
                         <span style={{ color: 'var(--text-caption)', fontSize: '13px' }}>🔥</span>
                     </div>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', padding: '0 20px' }}>

@@ -3,14 +3,22 @@ import { ChefHat, ArrowRight, User, Lock, Mail, Moon, Sun } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { useTranslation } from '../translations';
 
 const Auth = () => {
-    const [isLogin, setIsLogin] = useState(true);
+    const [isLogin, setIsLogin] = useState(() => {
+        return localStorage.getItem('hasRegistered') === 'true';
+    });
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [name, setName] = useState('');
-    const { login } = useAuth();
+    const [errorMsg, setErrorMsg] = useState('');
+    const { login, register, user, updatePreferences } = useAuth();
     const navigate = useNavigate();
+
+    // get lang from user or localStorage
+    const language = user?.preferences?.language || localStorage.getItem('guest_lang') || 'tr';
+    const t = useTranslation(language);
 
     // Theme state
     const [isDark, setIsDark] = useState(false);
@@ -34,8 +42,21 @@ const Auth = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        login(email, isLogin ? null : name);
-        navigate('/');
+        setErrorMsg('');
+
+        let result;
+        if (isLogin) {
+            result = login(email, password);
+        } else {
+            result = register(email, password, name);
+        }
+
+        if (result.success) {
+            localStorage.setItem('hasRegistered', 'true');
+            navigate('/');
+        } else {
+            setErrorMsg(result.message);
+        }
     };
 
     return (
@@ -76,21 +97,27 @@ const Auth = () => {
                 </motion.div>
 
                 <h1 style={{ fontSize: '28px', fontWeight: 800, color: 'var(--text-main)', marginBottom: '8px' }}>
-                    {isLogin ? 'Tekrar Hoş Geldin' : 'Aramıza Katıl'}
+                    {isLogin ? t('welcome_back') : t('join_us')}
                 </h1>
                 <p style={{ color: 'var(--text-secondary)', fontSize: '15px' }}>
-                    {isLogin ? 'Lezzet dünyasına dönmek için giriş yap.' : 'Kendi tarif defterini oluşturmak için hesap aç.'}
+                    {isLogin ? t('login_desc') : t('signup_desc')}
                 </p>
             </div>
 
             <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+
+                {errorMsg && (
+                    <div style={{ padding: '12px', backgroundColor: '#FEE2E2', color: '#DC2626', borderRadius: '12px', fontSize: '14px', textAlign: 'center', fontWeight: '500' }}>
+                        {errorMsg}
+                    </div>
+                )}
 
                 {!isLogin && (
                     <div style={{ position: 'relative' }}>
                         <User size={20} color="var(--text-caption)" style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)' }} />
                         <input
                             type="text"
-                            placeholder="Adın Soyadın"
+                            placeholder={t('fullname')}
                             value={name}
                             onChange={(e) => setName(e.target.value)}
                             required={!isLogin}
@@ -109,7 +136,7 @@ const Auth = () => {
                     <Mail size={20} color="var(--text-caption)" style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)' }} />
                     <input
                         type="email"
-                        placeholder="E-posta Adresi"
+                        placeholder={t('email')}
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         required
@@ -127,7 +154,7 @@ const Auth = () => {
                     <Lock size={20} color="var(--text-caption)" style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)' }} />
                     <input
                         type="password"
-                        placeholder="Şifre"
+                        placeholder={t('password')}
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         required
@@ -151,7 +178,7 @@ const Auth = () => {
                         boxShadow: '0 8px 20px rgba(240, 85, 40, 0.25)'
                     }}
                 >
-                    {isLogin ? 'Giriş Yap' : 'Kayıt Ol'}
+                    {isLogin ? t('login_btn') : t('signup_btn')}
                     <ArrowRight size={20} />
                 </button>
 
@@ -159,12 +186,12 @@ const Auth = () => {
 
             <div style={{ marginTop: '32px', textAlign: 'center' }}>
                 <p style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>
-                    {isLogin ? 'Hesabın yok mu?' : 'Zaten hesabın var mı?'}
+                    {isLogin ? t('no_account') : t('has_account')}
                     <button
                         onClick={() => setIsLogin(!isLogin)}
                         style={{ color: 'var(--primary)', fontWeight: 700, marginLeft: '6px' }}
                     >
-                        {isLogin ? 'Kayıt Ol' : 'Giriş Yap'}
+                        {isLogin ? t('signup_btn') : t('login_btn')}
                     </button>
                 </p>
             </div>

@@ -39,18 +39,36 @@ export const AuthProvider = ({ children }) => {
         }
     }, [user]);
 
-    const login = (email, name) => {
-        const fauxUser = {
+    const login = (email, password) => {
+        const users = JSON.parse(localStorage.getItem('appUsers') || '[]');
+        const existingUser = users.find(u => u.email === email && u.password === password);
+        if (existingUser) {
+            setUser(existingUser);
+            return { success: true };
+        }
+        return { success: false, message: 'Hatalı e-posta veya şifre!' };
+    };
+
+    const register = (email, password, name) => {
+        const users = JSON.parse(localStorage.getItem('appUsers') || '[]');
+        if (users.find(u => u.email === email)) {
+            return { success: false, message: 'Bu e-posta zaten kullanımda.' };
+        }
+        const newUser = {
             email,
+            password,
             name: name || "Mars Şef",
-            avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Felix",
-            // Initialize empty lists if new user
+            avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=" + encodeURIComponent(name || email),
             saved: [],
             favorites: [],
             history: [],
-            reviews: []
+            reviews: [],
+            preferences: { notifications: true, darkMode: false, language: 'tr' }
         };
-        setUser(fauxUser);
+        users.push(newUser);
+        localStorage.setItem('appUsers', JSON.stringify(users));
+        setUser(newUser);
+        return { success: true };
     };
 
     const logout = () => {
@@ -150,6 +168,7 @@ export const AuthProvider = ({ children }) => {
         <AuthContext.Provider value={{
             user,
             login,
+            register,
             logout,
             toggleSave,
             toggleFavorite,
@@ -160,6 +179,6 @@ export const AuthProvider = ({ children }) => {
             updatePassword
         }}>
             {children}
-        </AuthContext.Provider>
+        </AuthContext.Provider >
     );
 };

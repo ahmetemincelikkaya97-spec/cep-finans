@@ -3,17 +3,22 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { recipes } from '../data/recipes';
 import { useAuth } from '../context/AuthContext';
 import { X, ChevronLeft, ChevronRight, CheckCircle, Clock } from 'lucide-react';
+import { useTranslation } from '../translations';
 
 const CookingMode = () => {
     const { id } = useParams();
     const navigate = useNavigate();
-    const { addToHistory } = useAuth();
+    const { addToHistory, user } = useAuth();
     const recipe = recipes.find(r => r.id === parseInt(id));
+
+    // get lang from user or localStorage
+    const language = user?.preferences?.language || localStorage.getItem('guest_lang') || 'tr';
+    const t = useTranslation(language);
 
     const [currentStep, setCurrentStep] = useState(0);
     const [isCompleted, setIsCompleted] = useState(false);
 
-    if (!recipe) return <div className="container" style={{ color: 'var(--text-main)' }}>Tarif bulunamadı.</div>;
+    if (!recipe) return <div className="container" style={{ color: 'var(--text-main)' }}>{t('recipe_not_found')}</div>;
 
     const totalSteps = recipe.steps.length;
     const progress = ((currentStep + 1) / totalSteps) * 100;
@@ -34,7 +39,7 @@ const CookingMode = () => {
     };
 
     const handleClose = () => {
-        if (isCompleted || window.confirm("Pişirme modundan çıkmak istiyor musunuz?")) {
+        if (isCompleted || window.confirm(t('exit_cooking'))) {
             navigate(-1);
         }
     };
@@ -54,10 +59,10 @@ const CookingMode = () => {
                     <CheckCircle size={50} color="var(--tag-green-text)" />
                 </div>
                 <h2 style={{ fontSize: '24px', fontWeight: 800, color: 'var(--text-main)', marginBottom: '8px' }}>
-                    Ellerine Sağlık!
+                    {t('well_done_title')}
                 </h2>
                 <p style={{ color: 'var(--text-secondary)', marginBottom: '32px' }}>
-                    "{recipe.title}" tarifini başarıyla tamamladın.
+                    "{recipe.title}" {t('completed_recipe')}
                 </p>
                 <button
                     onClick={() => navigate(-1)}
@@ -66,7 +71,7 @@ const CookingMode = () => {
                         borderRadius: '50px', fontWeight: 700, width: '100%'
                     }}
                 >
-                    Tarife Dön
+                    {t('back_to_recipe')}
                 </button>
             </div>
         );
@@ -83,7 +88,7 @@ const CookingMode = () => {
                 backgroundColor: 'var(--bg-card)', borderBottom: '1px solid var(--border-light)'
             }}>
                 <div style={{ fontWeight: 700, color: 'var(--text-main)' }}>
-                    Adım {currentStep + 1} / {totalSteps}
+                    {t('step')} {currentStep + 1} / {totalSteps}
                 </div>
                 <button onClick={handleClose} style={{ padding: '8px' }}>
                     <X size={24} color="var(--text-main)" />
@@ -108,7 +113,7 @@ const CookingMode = () => {
                     display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-secondary)', fontSize: '13px'
                 }}>
                     <Clock size={16} />
-                    <span>Acele etmeyin, keyfini çıkarın</span>
+                    <span>{t('take_your_time')}</span>
                 </div>
 
                 <h2 style={{
@@ -147,7 +152,7 @@ const CookingMode = () => {
                         fontWeight: 700, fontSize: '16px', gap: '8px'
                     }}
                 >
-                    {currentStep === totalSteps - 1 ? 'Bitir' : 'Sonraki Adım'}
+                    {currentStep === totalSteps - 1 ? t('finish') : t('next_step')}
                     {currentStep !== totalSteps - 1 && <ChevronRight size={20} />}
                 </button>
             </div>

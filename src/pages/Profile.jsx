@@ -4,10 +4,15 @@ import { useNavigate } from 'react-router-dom';
 import { Settings, Bookmark, Heart, Clock, ChevronRight, Star, LogOut } from 'lucide-react';
 import { recipes } from '../data/recipes';
 import RecipeCard from '../components/RecipeCard';
+import { useTranslation } from '../translations';
 
 const Profile = () => {
     const { user, logout } = useAuth();
     const navigate = useNavigate();
+
+    // get lang from user or localStorage
+    const language = user?.preferences?.language || localStorage.getItem('guest_lang') || 'tr';
+    const t = useTranslation(language);
 
     // 1. GÜVENLİK DUVARI: Kullanıcı yoksa beyaz ekran yerine bu "Misafir" kartı görünür.
     // Bu sayede uygulama asla çökmez.
@@ -19,9 +24,9 @@ const Profile = () => {
                 backgroundColor: 'var(--bg-app)'
             }}>
                 <div style={{ fontSize: '48px', marginBottom: '16px' }}>🔒</div>
-                <h2 style={{ fontSize: '20px', fontWeight: 800, color: 'var(--text-main)' }}>Oturum Açın</h2>
+                <h2 style={{ fontSize: '20px', fontWeight: 800, color: 'var(--text-main)' }}>{t('login_title')}</h2>
                 <p style={{ color: 'var(--text-secondary)', marginBottom: '24px' }}>
-                    Profilinize erişmek için giriş yapmalısınız.
+                    {t('login_to_access')}
                 </p>
                 <button
                     onClick={() => navigate('/auth')}
@@ -30,7 +35,7 @@ const Profile = () => {
                         backgroundColor: 'var(--primary)', color: 'white', fontWeight: 700
                     }}
                 >
-                    Giriş Yap
+                    {t('login_btn')}
                 </button>
             </div>
         );
@@ -74,13 +79,13 @@ const Profile = () => {
                         />
                     </div>
                     <h1 style={{ fontSize: '22px', fontWeight: 800, color: 'var(--text-main)', marginBottom: '4px' }}>
-                        {user.name || "İsimsiz Şef"}
+                        {user.name || t('anonymous_chef')}
                     </h1>
                     <div style={{ fontSize: '14px', color: 'var(--text-secondary)', marginBottom: '12px' }}>
-                        {user.email || 'e-posta yok'}
+                        {user.email || t('no_email')}
                     </div>
                     <p style={{ fontSize: '14px', color: 'var(--text-secondary)', maxWidth: '280px', lineHeight: 1.5 }}>
-                        {user.bio || "Mutfakta harikalar yaratmaya hazır!"}
+                        {user.bio || t('bio_default')}
                     </p>
 
                     {/* Stats Row */}
@@ -90,17 +95,17 @@ const Profile = () => {
                     }}>
                         <div style={{ textAlign: 'center' }}>
                             <div style={{ fontSize: '18px', fontWeight: 800, color: 'var(--primary)' }}>{safeStats.cooked}</div>
-                            <div style={{ fontSize: '11px', color: 'var(--text-secondary)', fontWeight: 600 }}>Pişirilen</div>
+                            <div style={{ fontSize: '11px', color: 'var(--text-secondary)', fontWeight: 600 }}>{t('cooked_stat')}</div>
                         </div>
                         <div style={{ width: '1px', backgroundColor: 'var(--border-light)' }}></div>
                         <div style={{ textAlign: 'center' }}>
                             <div style={{ fontSize: '18px', fontWeight: 800, color: 'var(--text-main)' }}>{safeStats.saved}</div>
-                            <div style={{ fontSize: '11px', color: 'var(--text-secondary)', fontWeight: 600 }}>Kaydedilen</div>
+                            <div style={{ fontSize: '11px', color: 'var(--text-secondary)', fontWeight: 600 }}>{t('saved_stat')}</div>
                         </div>
                         <div style={{ width: '1px', backgroundColor: 'var(--border-light)' }}></div>
                         <div style={{ textAlign: 'center' }}>
                             <div style={{ fontSize: '18px', fontWeight: 800, color: 'var(--text-main)' }}>{safeStats.reviews}</div>
-                            <div style={{ fontSize: '11px', color: 'var(--text-secondary)', fontWeight: 600 }}>Yorum</div>
+                            <div style={{ fontSize: '11px', color: 'var(--text-secondary)', fontWeight: 600 }}>{t('reviews_stat')}</div>
                         </div>
                     </div>
                 </div>
@@ -108,18 +113,18 @@ const Profile = () => {
 
             {/* Menu Items */}
             <div className="container" style={{ marginTop: '24px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                <MenuItem icon={<Bookmark size={20} />} label="Kaydedilen Tarifler" count={safeStats.saved} onClick={() => navigate('/saved')} />
-                <MenuItem icon={<Heart size={20} />} label="Favorilerim" count={user.favorites?.length} onClick={() => navigate('/favorites')} />
-                <MenuItem icon={<Star size={20} />} label="Yorumlarım & Puanlarım" count={safeStats.reviews} onClick={() => navigate('/reviews')} />
-                <MenuItem icon={<Clock size={20} />} label="Pişirme Geçmişi" count={safeStats.cooked} onClick={() => navigate('/history')} />
+                <MenuItem icon={<Bookmark size={20} />} label={t('saved_recipes')} count={safeStats.saved} onClick={() => navigate('/saved')} />
+                <MenuItem icon={<Heart size={20} />} label={t('favorites')} count={user.favorites?.length} onClick={() => navigate('/favorites')} />
+                <MenuItem icon={<Star size={20} />} label={t('my_reviews_ratings')} count={safeStats.reviews} onClick={() => navigate('/reviews')} />
+                <MenuItem icon={<Clock size={20} />} label={t('cooking_history')} count={safeStats.cooked} onClick={() => navigate('/history')} />
             </div>
 
             {/* Recent Saved Section */}
             {savedRecipes.length > 0 && (
                 <div className="container" style={{ marginTop: '30px' }}>
                     <div className="flex-between" style={{ marginBottom: '16px' }}>
-                        <h3 className="title-lg" style={{ fontSize: '18px' }}>Son Kaydedilenler</h3>
-                        <span onClick={() => navigate('/saved')} style={{ fontSize: '13px', fontWeight: 600, color: 'var(--primary)', cursor: 'pointer' }}>Tümü</span>
+                        <h3 className="title-lg" style={{ fontSize: '18px' }}>{t('recently_saved')}</h3>
+                        <span onClick={() => navigate('/saved')} style={{ fontSize: '13px', fontWeight: 600, color: 'var(--primary)', cursor: 'pointer' }}>{t('see_all')}</span>
                     </div>
                     <div style={{ display: 'flex', overflowX: 'auto', gap: '16px', paddingBottom: '10px', scrollbarWidth: 'none' }}>
                         {savedRecipes.map(recipe => (
@@ -140,7 +145,7 @@ const Profile = () => {
                         color: 'var(--tag-red-text)', fontWeight: 700
                     }}>
                     <LogOut size={18} />
-                    Çıkış Yap
+                    {t('logout')}
                 </button>
             </div>
         </div>

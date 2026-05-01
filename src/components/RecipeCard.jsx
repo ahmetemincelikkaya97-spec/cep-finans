@@ -86,9 +86,7 @@ const RecipeCard = ({ recipe, variant = 'vertical' }) => {
                             WebkitBoxOrient: 'vertical',
                             overflow: 'hidden',
                             lineHeight: '1.3',
-                            minHeight: '38px', // Eşit hizalama için min-height
-                            display: 'flex',
-                            alignItems: 'center' // Tek satırsa ortala
+                            minHeight: '38px' // Eşit hizalama için min-height
                         }}>
                             {recipe.title}
                         </h3>

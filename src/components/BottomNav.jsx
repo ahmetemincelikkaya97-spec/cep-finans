@@ -1,13 +1,19 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { Home, Compass, Bookmark, User } from 'lucide-react';
+import { useTranslation } from '../translations';
+import { useAuth } from '../context/AuthContext';
 
 const BottomNav = () => {
+    const { user } = useAuth();
+    const language = user?.preferences?.language || localStorage.getItem('guest_lang') || 'tr';
+    const t = useTranslation(language);
+
     const navItems = [
-        { icon: <Home size={24} />, label: 'Ana Sayfa', path: '/' },
-        { icon: <Compass size={24} />, label: 'Keşfet', path: '/explore' },
-        { icon: <Bookmark size={24} />, label: 'Kaydedilen', path: '/saved' },
-        { icon: <User size={24} />, label: 'Profil', path: '/profile' },
+        { icon: <Home size={24} />, label: t('home'), path: '/' },
+        { icon: <Compass size={24} />, label: t('explore'), path: '/explore' },
+        { icon: <Bookmark size={24} />, label: t('saved') || 'Kaydedilen', path: '/saved' },
+        { icon: <User size={24} />, label: t('profile'), path: '/profile' },
     ];
 
     return (

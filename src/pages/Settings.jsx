@@ -5,6 +5,7 @@ import {
     ArrowLeft, Mail, Lock, Bell, Globe, Scale, Moon,
     Shield, FileText, Info, LogOut, Trash2, ChevronRight
 } from 'lucide-react';
+import { useTranslation } from '../translations';
 
 const Settings = () => {
     const navigate = useNavigate();
@@ -14,31 +15,32 @@ const Settings = () => {
     const notifications = user?.preferences?.notifications ?? true;
     const darkMode = user?.preferences?.darkMode ?? false;
     const language = user?.preferences?.language ?? 'tr';
+    const t = useTranslation(language);
 
     const handleLogout = () => {
-        if (window.confirm("Çıkış yapmak istediğinize emin misiniz?")) {
+        if (window.confirm(t('confirm_logout'))) {
             logout();
             navigate('/auth');
         }
     };
 
     const handleDeleteAccount = () => {
-        if (window.confirm("Hesabınızı kalıcı olarak silmek istediğinize emin misiniz? Bu işlem geri alınamaz.")) {
+        if (window.confirm(t('confirm_delete_account'))) {
             logout();
             navigate('/auth');
         }
     };
 
     const handleEmailChange = () => {
-        const newEmail = prompt("Yeni e-posta adresinizi girin:", user?.email);
+        const newEmail = prompt(t('prompt_new_email'), user?.email);
         if (newEmail && newEmail !== user?.email) {
             updateEmail(newEmail);
-            alert("E-posta adresi güncellendi.");
+            alert(t('email_updated'));
         }
     };
 
     const handlePasswordChange = () => {
-        const newPass = prompt("Yeni şifrenizi girin:");
+        const newPass = prompt(t('prompt_new_password'));
         if (newPass) {
             updatePassword(newPass);
         }
@@ -48,7 +50,6 @@ const Settings = () => {
         const newLang = language === 'tr' ? 'en' : 'tr';
         updatePreferences({ language: newLang });
         // In a real app, this would trigger i18n change
-        alert(`Dil ${newLang === 'tr' ? 'Türkçe' : 'English'} olarak ayarlandı.`);
     };
 
     return (
@@ -63,64 +64,63 @@ const Settings = () => {
                 <button onClick={() => navigate(-1)} style={{ padding: '8px', marginLeft: '-8px' }}>
                     <ArrowLeft size={24} color="var(--text-main)" />
                 </button>
-                <h1 className="title-lg" style={{ fontSize: '20px', color: 'var(--text-main)' }}>Ayarlar</h1>
+                <h1 className="title-lg" style={{ fontSize: '20px', color: 'var(--text-main)' }}>{t('settings')}</h1>
             </div>
 
             <div className="container" style={{ paddingTop: '24px', display: 'flex', flexDirection: 'column', gap: '24px' }}>
 
                 {/* Section: Account */}
-                <Section title="Hesap">
+                <Section title={t('account')}>
                     <SettingsItem
                         icon={<Mail size={20} />}
-                        label="E-posta"
+                        label={t('email_label')}
                         value={user?.email || "Mars Şef"}
                         onClick={handleEmailChange}
                     />
                     <SettingsItem
                         icon={<Lock size={20} />}
-                        label="Şifre Değiştir"
+                        label={t('change_password')}
                         onClick={handlePasswordChange}
                     />
                 </Section>
 
                 {/* Section: Preferences */}
-                <Section title="Tercihler">
+                <Section title={t('preferences')}>
                     <SettingsToggle
                         icon={<Bell size={20} />}
-                        label="Bildirimler"
+                        label={t('notifications')}
                         isOn={notifications}
                         onToggle={() => updatePreferences({ notifications: !notifications })}
                     />
                     <SettingsItem
                         icon={<Globe size={20} />}
-                        label="Dil"
+                        label={t('language')}
                         value={language === 'tr' ? "Türkçe" : "English"}
                         onClick={toggleLanguage}
                     />
-                    {/* Ölçü Birimleri removed as requested */}
                     <SettingsToggle
                         icon={<Moon size={20} />}
-                        label="Koyu Mod"
+                        label={t('dark_mode')}
                         isOn={darkMode}
                         onToggle={() => updatePreferences({ darkMode: !darkMode })}
                     />
                 </Section>
 
                 {/* Section: Privacy & Support */}
-                <Section title="Diğer">
+                <Section title={t('other')}>
                     <SettingsItem
                         icon={<Shield size={20} />}
-                        label="Gizlilik ve Güvenlik"
+                        label={t('privacy_policy')}
                         onClick={() => navigate('/privacy')}
                     />
                     <SettingsItem
                         icon={<FileText size={20} />}
-                        label="Kullanım Koşulları"
+                        label={t('terms')}
                         onClick={() => navigate('/terms')}
                     />
                     <SettingsItem
                         icon={<Info size={20} />}
-                        label="Hakkında"
+                        label={t('about_us')}
                         value="v1.0.2"
                         onClick={() => navigate('/about')}
                     />
@@ -138,7 +138,7 @@ const Settings = () => {
                         }}
                     >
                         <LogOut size={20} color="var(--text-secondary)" />
-                        <span style={{ fontWeight: 600, fontSize: '15px' }}>Çıkış Yap</span>
+                        <span style={{ fontWeight: 600, fontSize: '15px' }}>{t('logout')}</span>
                     </button>
 
                     <button
@@ -151,12 +151,12 @@ const Settings = () => {
                         }}
                     >
                         <Trash2 size={20} />
-                        <span style={{ fontWeight: 600, fontSize: '15px' }}>Hesabı Sil</span>
+                        <span style={{ fontWeight: 600, fontSize: '15px' }}>{t('delete_account')}</span>
                     </button>
                 </div>
 
                 <div style={{ textAlign: 'center', color: 'var(--text-caption)', fontSize: '12px', margin: '20px 0' }}>
-                    Mutfağın Şefi © 2026
+                    {t('copyright')}
                 </div>
 
             </div>

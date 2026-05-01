@@ -2,11 +2,13 @@ import React from 'react';
 import { useAuth } from '../context/AuthContext';
 import { recipes } from '../data/recipes';
 import RecipeCard from '../components/RecipeCard';
-import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Star, Calendar } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { useTranslation } from '../translations';
 
 const PageHeader = ({ title }) => {
     const navigate = useNavigate();
+
     return (
         <div style={{
             padding: '20px',
@@ -39,14 +41,19 @@ const PageHeader = ({ title }) => {
 
 export const SavedRecipes = () => {
     const { user } = useAuth();
+
+    // get lang from user or localStorage
+    const language = user?.preferences?.language || localStorage.getItem('guest_lang') || 'tr';
+    const t = useTranslation(language);
+
     // Safe navigation if user not logged in, though Profile protects this logic mostly
-    if (!user) return <div className="container" style={{ color: 'var(--text-main)' }}>Lütfen giriş yapın.</div>;
+    if (!user) return <div className="container" style={{ color: 'var(--text-main)' }}>{t('login_required')}</div>;
 
     const list = recipes.filter(r => user.saved?.includes(r.id));
 
     return (
         <div style={{ paddingBottom: 100, minHeight: '100vh', backgroundColor: 'var(--bg-app)' }}>
-            <PageHeader title="Kaydedilen Tarifler" />
+            <PageHeader title={t('saved_recipes')} />
             <div className="container" style={{ padding: '20px' }}>
                 {list.length > 0 ? (
                     <div style={{
@@ -58,7 +65,7 @@ export const SavedRecipes = () => {
                         {list.map(r => <RecipeCard key={r.id} recipe={r} variant="vertical" />)}
                     </div>
                 ) : (
-                    <EmptyState message="Henüz kaydedilmiş bir tarifiniz yok." />
+                    <EmptyState message={t('no_saved_recipes')} />
                 )}
             </div>
         </div>
@@ -67,13 +74,17 @@ export const SavedRecipes = () => {
 
 export const Favorites = () => {
     const { user } = useAuth();
-    if (!user) return <div className="container" style={{ color: 'var(--text-main)' }}>Lütfen giriş yapın.</div>;
+
+    const language = user?.preferences?.language || localStorage.getItem('guest_lang') || 'tr';
+    const t = useTranslation(language);
+
+    if (!user) return <div className="container" style={{ color: 'var(--text-main)' }}>{t('login_required')}</div>;
 
     const list = recipes.filter(r => user.favorites?.includes(r.id));
 
     return (
         <div style={{ paddingBottom: 100, minHeight: '100vh', backgroundColor: 'var(--bg-app)' }}>
-            <PageHeader title="Favorilerim" />
+            <PageHeader title={t('favorites')} />
             <div className="container" style={{ padding: '20px' }}>
                 {list.length > 0 ? (
                     <div style={{
@@ -85,7 +96,7 @@ export const Favorites = () => {
                         {list.map(r => <RecipeCard key={r.id} recipe={r} variant="vertical" />)}
                     </div>
                 ) : (
-                    <EmptyState message="Henüz favori tarifiniz yok." />
+                    <EmptyState message={t('no_favorites')} />
                 )}
             </div>
         </div>
@@ -94,13 +105,17 @@ export const Favorites = () => {
 
 export const CookingHistory = () => {
     const { user } = useAuth();
-    if (!user) return <div className="container" style={{ color: 'var(--text-main)' }}>Lütfen giriş yapın.</div>;
+
+    const language = user?.preferences?.language || localStorage.getItem('guest_lang') || 'tr';
+    const t = useTranslation(language);
+
+    if (!user) return <div className="container" style={{ color: 'var(--text-main)' }}>{t('login_required')}</div>;
 
     const historyItems = user.history ? [...user.history].reverse() : [];
 
     return (
         <div style={{ paddingBottom: 100, minHeight: '100vh', backgroundColor: 'var(--bg-app)' }}>
-            <PageHeader title="Pişirme Geçmişi" />
+            <PageHeader title={t('cooking_history')} />
             <div className="container" style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
                 {historyItems.length > 0 ? (
                     historyItems.map((item, idx) => {
@@ -117,14 +132,14 @@ export const CookingHistory = () => {
                                     <h4 style={{ fontWeight: 700, fontSize: '15px', color: 'var(--text-main)' }}>{recipe.title}</h4>
                                     <div style={{ fontSize: '12px', color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: '4px', marginTop: '4px' }}>
                                         <Calendar size={12} />
-                                        {new Date(item.date).toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' })}
+                                        {new Date(item.date).toLocaleDateString(language === 'en' ? 'en-US' : 'tr-TR', { day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' })}
                                     </div>
                                 </div>
                             </div>
                         );
                     })
                 ) : (
-                    <EmptyState message="Henüz hiç yemek pişirmediniz." />
+                    <EmptyState message={t('no_history')} />
                 )}
             </div>
         </div>
@@ -133,13 +148,17 @@ export const CookingHistory = () => {
 
 export const MyReviews = () => {
     const { user } = useAuth();
-    if (!user) return <div className="container" style={{ color: 'var(--text-main)' }}>Lütfen giriş yapın.</div>;
+
+    const language = user?.preferences?.language || localStorage.getItem('guest_lang') || 'tr';
+    const t = useTranslation(language);
+
+    if (!user) return <div className="container" style={{ color: 'var(--text-main)' }}>{t('login_required')}</div>;
 
     const reviews = user.reviews ? [...user.reviews].reverse() : [];
 
     return (
         <div style={{ paddingBottom: 100, minHeight: '100vh', backgroundColor: 'var(--bg-app)' }}>
-            <PageHeader title="Yorumlarım & Puanlarım" />
+            <PageHeader title={t('my_reviews_ratings')} />
             <div className="container" style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
                 {reviews.length > 0 ? (
                     reviews.map((review) => {
@@ -150,20 +169,20 @@ export const MyReviews = () => {
                                 boxShadow: 'var(--shadow-sm)'
                             }}>
                                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-                                    <span style={{ fontWeight: 700, fontSize: '15px' }}>{recipe?.title || "Bilinmeyen Tarif"}</span>
+                                    <span style={{ fontWeight: 700, fontSize: '15px' }}>{recipe?.title || t('unknown_recipe')}</span>
                                     <div style={{ display: 'flex', alignItems: 'center', gap: '4px', color: '#F59E0B', fontWeight: 700 }}>
                                         <Star size={14} fill="#F59E0B" /> {review.rating}
                                     </div>
                                 </div>
                                 <p style={{ fontSize: '14px', color: 'var(--text-secondary)', lineHeight: 1.5 }}>"{review.comment}"</p>
                                 <div style={{ marginTop: '8px', fontSize: '11px', color: '#9CA3AF' }}>
-                                    {new Date(review.date).toLocaleDateString('tr-TR')}
+                                    {new Date(review.date).toLocaleDateString(language === 'en' ? 'en-US' : 'tr-TR')}
                                 </div>
                             </div>
                         );
                     })
                 ) : (
-                    <EmptyState message="Henüz hiç yorum yapmadınız." />
+                    <EmptyState message={t('no_reviews')} />
                 )}
             </div>
         </div>

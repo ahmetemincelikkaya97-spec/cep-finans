@@ -3,10 +3,15 @@ import { categories, recipes } from '../data/recipes';
 import RecipeCard from '../components/RecipeCard';
 import { Filter, Search } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+import { useTranslation } from '../translations';
 
 const Explore = () => {
     const [activeCat, setActiveCat] = useState('all');
     const [searchQuery, setSearchQuery] = useState("");
+    const { user } = useAuth();
+    const language = user?.preferences?.language || localStorage.getItem('guest_lang') || 'tr';
+    const t = useTranslation(language);
 
     // Filter recipes based on category AND search query
     const filteredRecipes = recipes.filter(r => {
@@ -19,8 +24,8 @@ const Explore = () => {
         return matchesCategory && matchesSearch;
     });
 
-    // Kategorileri filtrele (Türk, Meksika gizlensin - İtalyan ve Japon artık açık)
-    const hiddenCategories = ['tr', 'mx'];
+    // Kategorileri filtrele (Türk gizlensin - İtalyan, Japon ve Meksika artık açık)
+    const hiddenCategories = ['tr'];
     const displayCategories = categories.filter(c => !hiddenCategories.includes(c.id));
 
     return (
@@ -35,7 +40,7 @@ const Explore = () => {
                     <Search size={22} color="var(--primary)" />
                     <input
                         type="text"
-                        placeholder="Global tariflerde ara..."
+                        placeholder={t('search_global')}
                         style={{
                             border: 'none', outline: 'none', width: '100%', fontSize: '15px',
                             fontWeight: 500, color: 'var(--text-main)', backgroundColor: 'transparent'
@@ -75,7 +80,7 @@ const Explore = () => {
                             ))
                         ) : (
                             <div style={{ padding: '16px', color: 'var(--text-secondary)', textAlign: 'center', fontSize: '14px' }}>
-                                Tarif bulunamadı.
+                                {t('recipe_not_found')}
                             </div>
                         )}
                     </div>
@@ -107,7 +112,7 @@ const Explore = () => {
                             }}
                         >
                             <span>{cat.icon}</span>
-                            {cat.title}
+                            {language === 'en' && cat.title_en ? cat.title_en : cat.title}
                         </button>
                     ))}
                 </div>
@@ -117,7 +122,9 @@ const Explore = () => {
             <div className="container" style={{ marginTop: '20px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
                     <h2 className="title-lg" style={{ fontSize: '20px' }}>
-                        {activeCat === 'all' ? 'Öne Çıkanlar' : categories.find(c => c.id === activeCat)?.title + ' Mutfağı'}
+                        {activeCat === 'all'
+                            ? t('featured')
+                            : `${language === 'en' && categories.find(c => c.id === activeCat)?.title_en ? categories.find(c => c.id === activeCat)?.title_en : categories.find(c => c.id === activeCat)?.title} ${t('cuisine_postfix')}`}
                     </h2>
                 </div>
 
@@ -137,14 +144,14 @@ const Explore = () => {
                                     color: 'white', fontSize: '9px', fontWeight: 800,
                                     padding: '4px 8px', borderRadius: '4px', textTransform: 'uppercase'
                                 }}>
-                                    {recipe.isModern ? 'MODERN' : 'KLASİK'}
+                                    {recipe.isModern ? t('modern') : t('classic')}
                                 </div>
                                 <RecipeCard recipe={recipe} />
                             </div>
                         ))
                     ) : (
                         <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '40px', color: 'var(--text-secondary)' }}>
-                            Aradığınız kriterlere uygun tarif bulunamadı.
+                            {t('no_results')}
                         </div>
                     )}
                 </div>
