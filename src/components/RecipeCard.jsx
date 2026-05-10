@@ -2,8 +2,23 @@ import React from 'react';
 import { Clock, BarChart2, Heart, Star, MessageCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
-const RecipeCard = ({ recipe, variant = 'vertical' }) => {
+const RecipeCard = ({ recipe, variant = 'vertical', showCountryBadge = false }) => {
     const isHorizontal = variant === 'horizontal';
+
+    const getCountryName = (cat) => {
+        const countries = {
+            'it': 'İtalya',
+            'es': 'İspanya',
+            'jp': 'Japonya',
+            'mx': 'Meksika',
+            'de': 'Almanya',
+            'cn': 'Çin',
+            'tr': 'Türkiye'
+        };
+        return countries[cat] || null;
+    };
+    
+    const countryName = getCountryName(recipe.category);
 
     // Mock stats generation based on ID to keep it consistent
     const generateStats = (id) => {
@@ -48,6 +63,23 @@ const RecipeCard = ({ recipe, variant = 'vertical' }) => {
                         }}
                         style={{ width: '100%', height: '100%', objectFit: 'cover', backgroundColor: '#FFF0EB', position: 'absolute', top: 0, left: 0 }}
                     />
+                    {showCountryBadge && countryName && (
+                        <div style={{
+                            position: 'absolute',
+                            top: '8px',
+                            left: '8px',
+                            background: 'rgba(0, 0, 0, 0.65)',
+                            color: '#fff',
+                            padding: '4px 8px',
+                            borderRadius: '6px',
+                            fontSize: '11px',
+                            fontWeight: 600,
+                            zIndex: 5,
+                            backdropFilter: 'blur(4px)'
+                        }}>
+                            📍 {countryName}
+                        </div>
+                    )}
                     {!isHorizontal && (
                         <button style={{
                             position: 'absolute',

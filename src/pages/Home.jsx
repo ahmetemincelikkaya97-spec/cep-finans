@@ -59,7 +59,15 @@ const Home = () => {
     // 2. Filtrelemeler
     const popularRecipes = recipes.filter(r => r.rating >= 4.7).slice(0, 5);
     const traditionalTr = recipes.filter(r => r.isTraditional || r.category === 'tr' || r.tags?.includes('Türk')).slice(0, 5);
-    const worldCuisines = recipes.filter(r => r.category !== 'tr' && !r.isTraditional && !r.tags?.includes('Türk')).slice(0, 5);
+    
+    const worldCuisineCategories = ['it', 'es', 'jp', 'mx', 'de', 'cn'];
+    const worldCuisines = [];
+    worldCuisineCategories.forEach(cat => {
+        const recipeForCat = recipes.find(r => r.category === cat);
+        if (recipeForCat) {
+            worldCuisines.push(recipeForCat);
+        }
+    });
 
     return (
         <div style={{ paddingBottom: '100px', maxWidth: '600px', margin: '0 auto', backgroundColor: 'var(--bg-app)', minHeight: '100vh' }}>
@@ -266,7 +274,7 @@ const Home = () => {
                             <div style={{ width: '20px', flexShrink: 0 }}></div>
                             {worldCuisines.map(recipe => (
                                 <div key={recipe.id} style={{ minWidth: '220px', maxWidth: '220px' }}>
-                                    <RecipeCard recipe={recipe} />
+                                    <RecipeCard recipe={recipe} showCountryBadge={true} />
                                 </div>
                             ))}
                             <div style={{ width: '4px', flexShrink: 0 }}></div>
