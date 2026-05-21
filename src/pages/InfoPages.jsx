@@ -120,7 +120,7 @@ export const About = () => {
                 }}>
                     👨‍🍳
                 </div>
-                <h2 style={{ fontSize: '24px', fontWeight: 800, color: 'var(--text-main)', marginBottom: '4px' }}>Mutfağın Şefi</h2>
+                <h2 style={{ fontSize: '24px', fontWeight: 800, color: 'var(--text-main)', marginBottom: '4px' }}>Tadora</h2>
                 <div style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>v1.0.2</div>
             </div>
 

@@ -5,6 +5,19 @@ import RecipeCard from '../components/RecipeCard';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useTranslation } from '../translations';
+import { motion } from 'framer-motion';
+
+const pageVariants = {
+    initial: { opacity: 0, x: 20 },
+    in: { opacity: 1, x: 0 },
+    out: { opacity: 0, x: -20 }
+};
+
+const pageTransition = {
+    type: "tween",
+    ease: "anticipate",
+    duration: 0.3
+};
 
 const Home = () => {
     const navigate = useNavigate();
@@ -70,7 +83,9 @@ const Home = () => {
     });
 
     return (
-        <div style={{ paddingBottom: '100px', maxWidth: '600px', margin: '0 auto', backgroundColor: 'var(--bg-app)', minHeight: '100vh' }}>
+        <motion.div 
+            initial="initial" animate="in" exit="out" variants={pageVariants} transition={pageTransition}
+            style={{ paddingBottom: '100px', maxWidth: '600px', margin: '0 auto', backgroundColor: 'var(--bg-app)', minHeight: '100vh' }}>
             {/* Header */}
             <div className="container" style={{ paddingTop: '20px', paddingBottom: '10px' }}>
                 <div className="flex-between">
@@ -295,7 +310,7 @@ const Home = () => {
                     </div>
                 </div>
             </div>
-        </div>
+        </motion.div>
     );
 };
 

@@ -46,7 +46,7 @@ export const translations = {
         change_password: "Şifre Değiştir",
         other: "Diğer",
         delete_account: "Hesabı Sil",
-        copyright: "Mutfağın Şefi © 2026",
+        copyright: "Tadora © 2026",
 
         // Home & Explore
         popular_recipes: "Popüler Tarifler",
@@ -74,7 +74,7 @@ export const translations = {
         terms: "Kullanım Koşulları",
         about: "Hakkında",
         data_safe: "Verileriniz Bizimle Güvende",
-        data_safe_desc: "Mutfağın Şefi olarak gizliliğinize önem veriyoruz. Bu uygulama, kişisel verilerinizi sadece cihazınızda (LocalStorage) saklayacak şekilde tasarlanmıştır.",
+        data_safe_desc: "Tadora olarak gizliliğinize önem veriyoruz. Bu uygulama, kişisel verilerinizi sadece cihazınızda (LocalStorage) saklayacak şekilde tasarlanmıştır.",
         data_collected: "Hangi Verileri Topluyoruz?",
         data_1: "Favori tarifleriniz",
         data_2: "Pişirme geçmişiniz",
@@ -95,7 +95,7 @@ export const translations = {
         mission_desc: "Dünyanın her yerinden en lezzetli tarifleri, herkesin kolayca yapabileceği şekilde sunmak.",
         developer: "Geliştirici",
         developer_desc: "Bu uygulama sevgiyle geliştirilmiştir. Her türlü geri bildiriminiz için bizimle iletişime geçebilirsiniz.",
-        all_rights: "© 2026 Mutfağın Şefi. Tüm hakları saklıdır.",
+        all_rights: "© 2026 Tadora. Tüm hakları saklıdır.",
 
         // Profile
         login_title: "Oturum Açın",
@@ -134,6 +134,12 @@ export const translations = {
         chef_tip: "Şefin Teknik Önerisi",
         for_two: "2 Kişilik",
         step_word: "Adım",
+        shopping_list: "Alışveriş Listesi",
+        add_to_shopping_list: "Eksikleri Alışveriş Listesine Ekle",
+        added_to_shopping_list: "Malzemeler eklendi!",
+        shopping_list_empty: "Alışveriş listeniz boş.",
+        remove: "Temizle",
+        tap_again_to_exit: "Çıkmak için tekrar dokunun",
 
         // Cooking Mode
         step: "Adım",
@@ -282,6 +288,12 @@ export const translations = {
         chef_tip: "Chef's Technical Tip",
         for_two: "For 2",
         step_word: "Step",
+        shopping_list: "Shopping List",
+        add_to_shopping_list: "Add Missing to Shopping List",
+        added_to_shopping_list: "Ingredients added!",
+        shopping_list_empty: "Your shopping list is empty.",
+        remove: "Clear",
+        tap_again_to_exit: "Tap again to exit",
 
         // Cooking Mode
         step: "Step",

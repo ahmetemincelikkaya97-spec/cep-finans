@@ -5,6 +5,34 @@ import { Filter, Search } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useTranslation } from '../translations';
+import { motion } from 'framer-motion';
+
+const pageVariants = {
+    initial: { opacity: 0, x: 20 },
+    in: { opacity: 1, x: 0 },
+    out: { opacity: 0, x: -20 }
+};
+
+const pageTransition = {
+    type: "tween",
+    ease: "anticipate",
+    duration: 0.3
+};
+
+const containerVariants = {
+    hidden: { opacity: 0 },
+    show: {
+        opacity: 1,
+        transition: {
+            staggerChildren: 0.1
+        }
+    }
+};
+
+const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    show: { opacity: 1, y: 0 }
+};
 
 const Explore = () => {
     const [activeCat, setActiveCat] = useState('all');
@@ -29,7 +57,9 @@ const Explore = () => {
     const displayCategories = categories.filter(c => !hiddenCategories.includes(c.id));
 
     return (
-        <div style={{ paddingBottom: '80px', minHeight: '100vh', backgroundColor: 'var(--bg-app)' }}>
+        <motion.div 
+            initial="initial" animate="in" exit="out" variants={pageVariants} transition={pageTransition}
+            style={{ paddingBottom: '80px', minHeight: '100vh', backgroundColor: 'var(--bg-app)' }}>
             {/* Top Bar - Custom Style matching Home */}
             <div className="container" style={{ paddingTop: '20px', position: 'relative', zIndex: 50 }}>
                 <div style={{
@@ -89,12 +119,17 @@ const Explore = () => {
 
             {/* Categories */}
             <div style={{ marginTop: '24px' }}>
-                <div style={{
-                    display: 'flex', overflowX: 'auto', gap: '12px', padding: '0 20px 10px 20px',
-                    scrollbarWidth: 'none'
-                }}>
+                <motion.div 
+                    variants={containerVariants}
+                    initial="hidden"
+                    animate="show"
+                    style={{
+                        display: 'flex', overflowX: 'auto', gap: '12px', padding: '0 20px 10px 20px',
+                        scrollbarWidth: 'none'
+                    }}>
                     {displayCategories.map(cat => (
-                        <button
+                        <motion.button
+                            variants={itemVariants}
                             key={cat.id}
                             onClick={() => setActiveCat(cat.id)}
                             style={{
@@ -108,14 +143,15 @@ const Explore = () => {
                                 boxShadow: activeCat === cat.id ? '0 4px 10px rgba(240,85,40,0.3)' : 'var(--shadow-sm)',
                                 border: activeCat === cat.id ? 'none' : '1px solid var(--border-light)',
                                 display: 'flex', alignItems: 'center', gap: '6px',
-                                transition: 'all 0.2s'
+                                transition: 'all 0.2s',
+                                cursor: 'pointer'
                             }}
                         >
                             <span>{cat.icon}</span>
                             {language === 'en' && cat.title_en ? cat.title_en : cat.title}
-                        </button>
+                        </motion.button>
                     ))}
-                </div>
+                </motion.div>
             </div>
 
             {/* Grid */}
@@ -156,7 +192,7 @@ const Explore = () => {
                     )}
                 </div>
             </div>
-        </div>
+        </motion.div>
     );
 };
 

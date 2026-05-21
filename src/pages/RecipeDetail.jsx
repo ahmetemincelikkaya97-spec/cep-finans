@@ -2,8 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { recipes } from '../data/recipes';
 import { useAuth } from '../context/AuthContext';
-import { ArrowLeft, Share2, Heart, Clock, Flame, ChefHat, PlayCircle, Bookmark, Star, Send, User } from 'lucide-react';
+import { ArrowLeft, Share2, Heart, Clock, Flame, ChefHat, PlayCircle, Bookmark, Star, Send, User, ShoppingCart, CheckCircle } from 'lucide-react';
 import { useTranslation } from '../translations';
+import { useShoppingList } from '../context/ShoppingListContext';
+import { motion } from 'framer-motion';
 
 const RecipeDetail = () => {
     const { id } = useParams();
@@ -13,10 +15,14 @@ const RecipeDetail = () => {
     // get lang from user or localStorage
     const language = user?.preferences?.language || localStorage.getItem('guest_lang') || 'tr';
     const t = useTranslation(language);
+    const { addItems } = useShoppingList();
 
     // Local state for review form
     const [rating, setRating] = useState(5);
     const [comment, setComment] = useState("");
+
+    // State for shopping list button animation
+    const [isAdded, setIsAdded] = useState(false);
 
     // Mock reviews state (starts with some fake reviews)
     const [mockReviews, setMockReviews] = useState([]);
@@ -181,10 +187,33 @@ const RecipeDetail = () => {
                 {/* Ingredients */}
                 <div style={{ marginTop: '32px' }}>
                     <div className="flex-between" style={{ marginBottom: '16px' }}>
-                        <h3 className="title-lg" style={{ fontSize: '20px', color: 'var(--text-main)' }}>{t('ingredients')}</h3>
-                        <div style={{ fontSize: '12px', color: 'var(--primary)', background: 'var(--primary-light)', padding: '4px 8px', borderRadius: '4px' }}>
-                            {t('for_two')}
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                            <h3 className="title-lg" style={{ fontSize: '20px', color: 'var(--text-main)', margin: 0 }}>{t('ingredients')}</h3>
+                            <div style={{ fontSize: '12px', color: 'var(--primary)', background: 'var(--primary-light)', padding: '4px 8px', borderRadius: '4px' }}>
+                                {t('for_two')}
+                            </div>
                         </div>
+                        <motion.button 
+                            whileTap={{ scale: 0.95 }}
+                            onClick={() => {
+                                handleAction(() => {
+                                    if(isAdded) return;
+                                    addItems(recipe.ingredients);
+                                    setIsAdded(true);
+                                    setTimeout(() => setIsAdded(false), 2000);
+                                });
+                            }}
+                            style={{ 
+                                display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', fontWeight: 600, 
+                                color: isAdded ? 'white' : 'var(--primary)', 
+                                backgroundColor: isAdded ? 'var(--primary)' : 'transparent',
+                                border: '1px solid var(--primary)', padding: '6px 12px', borderRadius: '50px', cursor: 'pointer',
+                                transition: 'background-color 0.3s, color 0.3s'
+                            }}
+                        >
+                            {isAdded ? <CheckCircle size={14} /> : <ShoppingCart size={14} />}
+                            {isAdded ? t('added_to_shopping_list') : t('add_to_shopping_list')}
+                        </motion.button>
                     </div>
 
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>

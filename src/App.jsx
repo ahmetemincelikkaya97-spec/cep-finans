@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
+import { ShoppingListProvider } from './context/ShoppingListContext';
 import BottomNav from './components/BottomNav';
 import Home from './pages/Home';
 import Explore from './pages/Explore';
@@ -12,6 +13,7 @@ import { SavedRecipes, Favorites, CookingHistory, MyReviews } from './pages/User
 import { Privacy, Terms, About } from './pages/InfoPages';
 import CookingMode from './pages/CookingMode';
 import SplashScreen from './components/SplashScreen';
+import ShoppingList from './pages/ShoppingList';
 import { AnimatePresence } from 'framer-motion';
 
 // Wrapper for scrolling to top
@@ -22,6 +24,37 @@ const ScrollToTop = () => {
   }, [pathname]);
   return null;
 }
+
+const AppContent = () => {
+  const location = useLocation();
+  return (
+    <>
+      <ScrollToTop />
+      <div style={{ paddingBottom: '70px' }}> {/* Bottom Nav Spacer */}
+        <AnimatePresence mode="wait">
+          <Routes location={location} key={location.pathname}>
+            <Route path="/" element={<Home />} />
+            <Route path="/auth" element={<Auth />} />
+            <Route path="/explore" element={<Explore />} />
+            <Route path="/saved" element={<SavedRecipes />} />
+            <Route path="/favorites" element={<Favorites />} />
+            <Route path="/history" element={<CookingHistory />} />
+            <Route path="/reviews" element={<MyReviews />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/settings" element={<Settings />} />
+            <Route path="/privacy" element={<Privacy />} />
+            <Route path="/terms" element={<Terms />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/recipe/:id" element={<RecipeDetail />} />
+            <Route path="/cook/:id" element={<CookingMode />} />
+            <Route path="/shopping-list" element={<ShoppingList />} />
+          </Routes>
+        </AnimatePresence>
+      </div>
+      <ConditionalBottomNav />
+    </>
+  );
+};
 
 const App = () => {
   const [showSplash, setShowSplash] = React.useState(true);
@@ -46,32 +79,14 @@ const App = () => {
 
   return (
     <AuthProvider>
-      <AnimatePresence>
-        {showSplash && <SplashScreen key="splash" />}
-      </AnimatePresence>
-      <Router>
-        <ScrollToTop />
-        <div style={{ paddingBottom: '70px' }}> {/* Bottom Nav Spacer */}
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/auth" element={<Auth />} />
-            <Route path="/explore" element={<Explore />} />
-            <Route path="/saved" element={<SavedRecipes />} />
-            <Route path="/favorites" element={<Favorites />} />
-            <Route path="/history" element={<CookingHistory />} />
-            <Route path="/reviews" element={<MyReviews />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/settings" element={<Settings />} />
-            <Route path="/privacy" element={<Privacy />} />
-            <Route path="/terms" element={<Terms />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/recipe/:id" element={<RecipeDetail />} />
-            <Route path="/cook/:id" element={<CookingMode />} />
-          </Routes>
-        </div>
-
-        <ConditionalBottomNav />
-      </Router>
+      <ShoppingListProvider>
+        <AnimatePresence>
+          {showSplash && <SplashScreen key="splash" />}
+        </AnimatePresence>
+        <Router>
+          <AppContent />
+        </Router>
+      </ShoppingListProvider>
     </AuthProvider>
   );
 };
@@ -79,7 +94,7 @@ const App = () => {
 const ConditionalBottomNav = () => {
   const location = useLocation();
   // Detail, Auth ve Cooking Mode sayfalarında bottom nav gizlensin
-  if (location.pathname.includes('/recipe/') || location.pathname.includes('/cook/') || location.pathname === '/auth') return null;
+  if (location.pathname.includes('/recipe/') || location.pathname.includes('/cook/') || location.pathname === '/auth' || location.pathname === '/shopping-list') return null;
 
   return <BottomNav />;
 };

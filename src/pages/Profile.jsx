@@ -1,10 +1,23 @@
 import React from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import { Settings, Bookmark, Heart, Clock, ChevronRight, Star, LogOut } from 'lucide-react';
+import { Settings, Bookmark, Heart, Clock, ChevronRight, Star, LogOut, ShoppingCart } from 'lucide-react';
 import { recipes } from '../data/recipes';
 import RecipeCard from '../components/RecipeCard';
 import { useTranslation } from '../translations';
+import { motion } from 'framer-motion';
+
+const pageVariants = {
+    initial: { opacity: 0, x: 20 },
+    in: { opacity: 1, x: 0 },
+    out: { opacity: 0, x: -20 }
+};
+
+const pageTransition = {
+    type: "tween",
+    ease: "anticipate",
+    duration: 0.3
+};
 
 const Profile = () => {
     const { user, logout } = useAuth();
@@ -57,7 +70,9 @@ const Profile = () => {
     };
 
     return (
-        <div style={{ paddingBottom: '100px', backgroundColor: 'var(--bg-app)', minHeight: '100vh' }}>
+        <motion.div 
+            initial="initial" animate="in" exit="out" variants={pageVariants} transition={pageTransition}
+            style={{ paddingBottom: '100px', backgroundColor: 'var(--bg-app)', minHeight: '100vh' }}>
             {/* Header / Cover */}
             <div style={{ backgroundColor: 'var(--bg-card)', padding: '30px 20px 20px', borderRadius: '0 0 24px 24px', boxShadow: 'var(--shadow-sm)' }}>
                 <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '10px' }}>
@@ -113,6 +128,7 @@ const Profile = () => {
 
             {/* Menu Items */}
             <div className="container" style={{ marginTop: '24px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                <MenuItem icon={<ShoppingCart size={20} />} label={t('shopping_list')} onClick={() => navigate('/shopping-list')} />
                 <MenuItem icon={<Bookmark size={20} />} label={t('saved_recipes')} count={safeStats.saved} onClick={() => navigate('/saved')} />
                 <MenuItem icon={<Heart size={20} />} label={t('favorites')} count={user.favorites?.length} onClick={() => navigate('/favorites')} />
                 <MenuItem icon={<Star size={20} />} label={t('my_reviews_ratings')} count={safeStats.reviews} onClick={() => navigate('/reviews')} />
@@ -148,7 +164,7 @@ const Profile = () => {
                     {t('logout')}
                 </button>
             </div>
-        </div>
+        </motion.div>
     );
 };
 

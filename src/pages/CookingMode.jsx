@@ -5,6 +5,7 @@ import { useAuth } from '../context/AuthContext';
 import { X, ChevronLeft, ChevronRight, CheckCircle, Clock } from 'lucide-react';
 import { useTranslation } from '../translations';
 import NoSleep from 'nosleep.js';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const CookingMode = () => {
     const { id } = useParams();
@@ -18,6 +19,7 @@ const CookingMode = () => {
 
     const [currentStep, setCurrentStep] = useState(0);
     const [isCompleted, setIsCompleted] = useState(false);
+    const [showExitToast, setShowExitToast] = useState(false);
 
     // Wake Lock State
     const noSleepRef = useRef(null);
@@ -146,8 +148,15 @@ const CookingMode = () => {
     };
 
     const handleClose = () => {
-        if (isCompleted || window.confirm(t('exit_cooking'))) {
+        if (isCompleted) {
             navigate(-1);
+            return;
+        }
+        if (showExitToast) {
+            navigate(-1);
+        } else {
+            setShowExitToast(true);
+            setTimeout(() => setShowExitToast(false), 2500);
         }
     };
 
@@ -342,6 +351,36 @@ const CookingMode = () => {
                     {currentStep !== totalSteps - 1 && <ChevronRight size={20} />}
                 </button>
             </div>
+
+            {/* Exit Toast Notification */}
+            <AnimatePresence>
+                {showExitToast && (
+                    <motion.div
+                        initial={{ opacity: 0, y: -50, x: "-50%", scale: 0.9 }}
+                        animate={{ opacity: 1, y: 0, x: "-50%", scale: 1 }}
+                        exit={{ opacity: 0, y: -20, x: "-50%", scale: 0.9 }}
+                        transition={{ type: "spring", stiffness: 400, damping: 25 }}
+                        style={{
+                            position: 'absolute',
+                            top: '80px', // slightly below header
+                            left: '50%',
+                            backgroundColor: 'rgba(30, 30, 30, 0.9)',
+                            backdropFilter: 'blur(8px)',
+                            color: 'white',
+                            padding: '12px 24px',
+                            borderRadius: '50px',
+                            fontWeight: 600,
+                            fontSize: '14px',
+                            boxShadow: '0 10px 25px rgba(0,0,0,0.2)',
+                            zIndex: 1000,
+                            whiteSpace: 'nowrap'
+                        }}
+                    >
+                        {t('tap_again_to_exit')}
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
         </div>
     );
 };

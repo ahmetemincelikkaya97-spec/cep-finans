@@ -5,6 +5,19 @@ import RecipeCard from '../components/RecipeCard';
 import { ArrowLeft, Star, Calendar } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from '../translations';
+import { motion } from 'framer-motion';
+
+const pageVariants = {
+    initial: { opacity: 0, x: 20 },
+    in: { opacity: 1, x: 0 },
+    out: { opacity: 0, x: -20 }
+};
+
+const pageTransition = {
+    type: "tween",
+    ease: "anticipate",
+    duration: 0.3
+};
 
 const PageHeader = ({ title }) => {
     const navigate = useNavigate();
@@ -52,7 +65,7 @@ export const SavedRecipes = () => {
     const list = recipes.filter(r => user.saved?.includes(r.id));
 
     return (
-        <div style={{ paddingBottom: 100, minHeight: '100vh', backgroundColor: 'var(--bg-app)' }}>
+        <motion.div initial="initial" animate="in" exit="out" variants={pageVariants} transition={pageTransition} style={{ paddingBottom: 100, minHeight: '100vh', backgroundColor: 'var(--bg-app)' }}>
             <PageHeader title={t('saved_recipes')} />
             <div className="container" style={{ padding: '20px' }}>
                 {list.length > 0 ? (
@@ -68,7 +81,7 @@ export const SavedRecipes = () => {
                     <EmptyState message={t('no_saved_recipes')} />
                 )}
             </div>
-        </div>
+        </motion.div>
     );
 };
 
@@ -83,7 +96,7 @@ export const Favorites = () => {
     const list = recipes.filter(r => user.favorites?.includes(r.id));
 
     return (
-        <div style={{ paddingBottom: 100, minHeight: '100vh', backgroundColor: 'var(--bg-app)' }}>
+        <motion.div initial="initial" animate="in" exit="out" variants={pageVariants} transition={pageTransition} style={{ paddingBottom: 100, minHeight: '100vh', backgroundColor: 'var(--bg-app)' }}>
             <PageHeader title={t('favorites')} />
             <div className="container" style={{ padding: '20px' }}>
                 {list.length > 0 ? (
@@ -99,7 +112,7 @@ export const Favorites = () => {
                     <EmptyState message={t('no_favorites')} />
                 )}
             </div>
-        </div>
+        </motion.div>
     );
 };
 
@@ -114,7 +127,7 @@ export const CookingHistory = () => {
     const historyItems = user.history ? [...user.history].reverse() : [];
 
     return (
-        <div style={{ paddingBottom: 100, minHeight: '100vh', backgroundColor: 'var(--bg-app)' }}>
+        <motion.div initial="initial" animate="in" exit="out" variants={pageVariants} transition={pageTransition} style={{ paddingBottom: 100, minHeight: '100vh', backgroundColor: 'var(--bg-app)' }}>
             <PageHeader title={t('cooking_history')} />
             <div className="container" style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
                 {historyItems.length > 0 ? (
@@ -142,7 +155,7 @@ export const CookingHistory = () => {
                     <EmptyState message={t('no_history')} />
                 )}
             </div>
-        </div>
+        </motion.div>
     );
 };
 
@@ -157,7 +170,7 @@ export const MyReviews = () => {
     const reviews = user.reviews ? [...user.reviews].reverse() : [];
 
     return (
-        <div style={{ paddingBottom: 100, minHeight: '100vh', backgroundColor: 'var(--bg-app)' }}>
+        <motion.div initial="initial" animate="in" exit="out" variants={pageVariants} transition={pageTransition} style={{ paddingBottom: 100, minHeight: '100vh', backgroundColor: 'var(--bg-app)' }}>
             <PageHeader title={t('my_reviews_ratings')} />
             <div className="container" style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
                 {reviews.length > 0 ? (
@@ -185,7 +198,7 @@ export const MyReviews = () => {
                     <EmptyState message={t('no_reviews')} />
                 )}
             </div>
-        </div>
+        </motion.div>
     );
 };
 
