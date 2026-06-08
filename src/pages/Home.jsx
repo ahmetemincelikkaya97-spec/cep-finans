@@ -4,6 +4,7 @@ import { recipes } from '../data/recipes';
 import RecipeCard from '../components/RecipeCard';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import MockAd from '../components/MockAd';
 import { useTranslation } from '../translations';
 import { motion } from 'framer-motion';
 
@@ -275,6 +276,11 @@ const Home = () => {
                     ))}
                     <div style={{ width: '4px', flexShrink: 0 }}></div> {/* Sağ boşluk */}
                 </div>
+
+                <div className="container">
+                    <MockAd type="rectangle" />
+                </div>
+
                 {/* Section: Dünya Mutfağı */}
                 {worldCuisines.length > 0 && (
                     <div style={{ marginTop: '0px' }}>

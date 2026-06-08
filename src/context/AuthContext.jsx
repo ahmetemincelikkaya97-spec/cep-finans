@@ -1,147 +1,49 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { recipes } from '../data/recipes';
+import { auth, db } from '../firebase';
+import { 
+    createUserWithEmailAndPassword, 
+    signInWithEmailAndPassword, 
+    signOut, 
+    onAuthStateChanged,
+    updateProfile,
+    deleteUser
+} from 'firebase/auth';
+import { doc, getDoc, setDoc, updateDoc, deleteDoc } from 'firebase/firestore';
 
 const AuthContext = createContext();
 
 export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider = ({ children }) => {
-    // User state now comprises profile info AND activity data
-    const [user, setUser] = useState(() => {
-        const savedUser = localStorage.getItem('user');
-        if (savedUser) {
-            const parsed = JSON.parse(savedUser);
-            // MERGE with defaults to prevent crashes if old data exists
-            return {
-                reviews: [],
-                history: [],
-                favorites: [],
-                saved: [],
-                ...parsed,
-                // Ensure nested preferences are also merged if they exist partially
-                preferences: {
-                    notifications: true,
-                    darkMode: false,
-                    language: 'tr',
-                    ...(parsed.preferences || {})
-                }
-            };
-        }
-        return null;
-    });
+    const [user, setUser] = useState(null);
+    const [loading, setLoading] = useState(true);
 
-    // Persist user changes
     useEffect(() => {
-        if (user) {
-            localStorage.setItem('user', JSON.stringify(user));
-        } else {
-            localStorage.removeItem('user');
-        }
-    }, [user]);
-
-    const login = (email, password) => {
-        const users = JSON.parse(localStorage.getItem('appUsers') || '[]');
-        const existingUser = users.find(u => u.email === email && u.password === password);
-        if (existingUser) {
-            setUser(existingUser);
-            return { success: true };
-        }
-        return { success: false, message: 'Hatalı e-posta veya şifre!' };
-    };
-
-    const register = (email, password, name) => {
-        const users = JSON.parse(localStorage.getItem('appUsers') || '[]');
-        if (users.find(u => u.email === email)) {
-            return { success: false, message: 'Bu e-posta zaten kullanımda.' };
-        }
-        const newUser = {
-            email,
-            password,
-            name: name || "Mars Şef",
-            avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=" + encodeURIComponent(name || email),
-            saved: [],
-            favorites: [],
-            history: [],
-            reviews: [],
-            preferences: { notifications: true, darkMode: false, language: 'tr' }
-        };
-        users.push(newUser);
-        localStorage.setItem('appUsers', JSON.stringify(users));
-        setUser(newUser);
-        return { success: true };
-    };
-
-    const logout = () => {
-        setUser(null);
-    };
-
-    // --- Action Methods ---
-
-    const toggleSave = (recipeId) => {
-        if (!user) return;
-        setUser(prev => {
-            const list = prev.saved || [];
-            const isSaved = list.includes(recipeId);
-            return {
-                ...prev,
-                saved: isSaved
-                    ? list.filter(id => id !== recipeId)
-                    : [...list, recipeId]
-            };
+        const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+            if (firebaseUser) {
+                // Fetch profile data from Firestore
+                const docRef = doc(db, 'users', firebaseUser.uid);
+                const docSnap = await getDoc(docRef);
+                
+                if (docSnap.exists()) {
+                    setUser({ ...firebaseUser, ...docSnap.data() });
+                } else {
+                    // Create default doc if missing
+                    const defaultData = {
+                        name: firebaseUser.displayName || 'Mars Şef',
+                        saved: [], favorites: [], history: [], reviews: [],
+                        preferences: { notifications: true, darkMode: false, language: 'tr' }
+                    };
+                    await setDoc(docRef, defaultData);
+                    setUser({ ...firebaseUser, ...defaultData });
+                }
+            } else {
+                setUser(null);
+            }
+            setLoading(false);
         });
-    };
-
-    const toggleFavorite = (recipeId) => {
-        if (!user) return;
-        setUser(prev => {
-            const list = prev.favorites || [];
-            const isFav = list.includes(recipeId);
-            return {
-                ...prev,
-                favorites: isFav
-                    ? list.filter(id => id !== recipeId)
-                    : [...list, recipeId]
-            };
-        });
-    };
-
-    const addToHistory = (recipeId) => {
-        if (!user) return;
-        setUser(prev => {
-            // Avoid duplicates for same day? For now just push to top
-            const newHistoryItem = { id: recipeId, date: new Date().toISOString() };
-            return {
-                ...prev,
-                history: [newHistoryItem, ...(prev.history || [])]
-            };
-        });
-    };
-
-    const addReview = (recipeId, rating, comment) => {
-        if (!user) return;
-        setUser(prev => {
-            const newReview = {
-                id: Date.now(),
-                recipeId,
-                rating,
-                comment,
-                date: new Date().toISOString()
-            };
-            return {
-                ...prev,
-                reviews: [newReview, ...(prev.reviews || [])]
-            };
-        });
-    };
-
-    // --- Preferences Logic ---
-    const updatePreferences = (updates) => {
-        if (!user) return;
-        setUser(prev => ({
-            ...prev,
-            preferences: { ...prev.preferences, ...updates }
-        }));
-    };
+        return () => unsubscribe();
+    }, []);
 
     // Apply dark mode whenever user changes
     useEffect(() => {
@@ -152,21 +54,128 @@ export const AuthProvider = ({ children }) => {
         }
     }, [user?.preferences?.darkMode]);
 
-    const updateEmail = (newEmail) => {
-        if (!user) return;
-        setUser(prev => ({ ...prev, email: newEmail }));
+    const login = async (email, password) => {
+        try {
+            await signInWithEmailAndPassword(auth, email, password);
+            return { success: true };
+        } catch (error) {
+            return { success: false, message: 'Hatalı e-posta veya şifre!' };
+        }
     };
 
-    const updatePassword = (newPassword) => {
-        // In a real app, this would make an API call.
-        // Here we just log it or maybe update a fake field.
-        console.log("Password updated to", newPassword);
-        alert("Şifreniz başarıyla güncellendi.");
+    const register = async (email, password, name) => {
+        try {
+            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+            const fbUser = userCredential.user;
+            await updateProfile(fbUser, { displayName: name || 'Mars Şef' });
+            
+            const defaultData = {
+                name: name || 'Mars Şef',
+                saved: [], favorites: [], history: [], reviews: [],
+                preferences: { notifications: true, darkMode: false, language: 'tr' }
+            };
+            await setDoc(doc(db, 'users', fbUser.uid), defaultData);
+            setUser({ ...fbUser, ...defaultData });
+            
+            return { success: true };
+        } catch (error) {
+            if (error.code === 'auth/email-already-in-use') {
+                return { success: false, message: 'Bu e-posta zaten kullanımda.' };
+            }
+            if (error.code === 'auth/weak-password') {
+                return { success: false, message: 'Şifre en az 6 karakter olmalıdır.' };
+            }
+            return { success: false, message: 'Kayıt olurken bir hata oluştu: ' + error.message };
+        }
+    };
+
+    const logout = async () => {
+        await signOut(auth);
+    };
+
+    const updateUserDoc = async (updates) => {
+        if (!user || !user.uid) return;
+        const newUserData = { ...user, ...updates };
+        setUser(newUserData); // Optimistic UI update
+        try {
+            await updateDoc(doc(db, 'users', user.uid), updates);
+        } catch (e) {
+            console.error("Error updating document: ", e);
+        }
+    };
+
+    const toggleSave = (recipeId) => {
+        if (!user) return;
+        const list = user.saved || [];
+        const isSaved = list.includes(recipeId);
+        const newList = isSaved ? list.filter(id => id !== recipeId) : [...list, recipeId];
+        updateUserDoc({ saved: newList });
+    };
+
+    const toggleFavorite = (recipeId) => {
+        if (!user) return;
+        const list = user.favorites || [];
+        const isFav = list.includes(recipeId);
+        const newList = isFav ? list.filter(id => id !== recipeId) : [...list, recipeId];
+        updateUserDoc({ favorites: newList });
+    };
+
+    const addToHistory = (recipeId) => {
+        if (!user) return;
+        const newHistoryItem = { id: recipeId, date: new Date().toISOString() };
+        const newHistory = [newHistoryItem, ...(user.history || [])];
+        updateUserDoc({ history: newHistory });
+    };
+
+    const addReview = (recipeId, rating, comment) => {
+        if (!user) return;
+        const newReview = {
+            id: Date.now(),
+            recipeId,
+            rating,
+            comment,
+            date: new Date().toISOString()
+        };
+        const newReviews = [newReview, ...(user.reviews || [])];
+        updateUserDoc({ reviews: newReviews });
+    };
+
+    const updatePreferences = (updates) => {
+        if (!user) return;
+        const newPreferences = { ...user.preferences, ...updates };
+        updateUserDoc({ preferences: newPreferences });
+    };
+
+    const updateEmail = async (newEmail) => {
+        alert("E-posta değiştirme işlemi şu an için devre dışı.");
+    };
+
+    const updatePassword = async (newPassword) => {
+        alert("Şifre güncelleme işlemi şu an için devre dışı.");
+    };
+
+    const deleteAccount = async () => {
+        if (!user || !auth.currentUser) return { success: false, message: 'Kullanıcı bulunamadı.' };
+        try {
+            // Önce veritabanındaki kullanıcı belgesini siliyoruz
+            await deleteDoc(doc(db, 'users', user.uid));
+            // Sonra Auth sisteminden siliyoruz
+            await deleteUser(auth.currentUser);
+            // State'i temizliyoruz
+            setUser(null);
+            return { success: true };
+        } catch (error) {
+            if (error.code === 'auth/requires-recent-login') {
+                return { success: false, message: 'Güvenlik gereği hesabınızı silmeden önce lütfen çıkış yapıp tekrar giriş yapın.' };
+            }
+            return { success: false, message: 'Hesap silinirken bir hata oluştu: ' + error.message };
+        }
     };
 
     return (
         <AuthContext.Provider value={{
             user,
+            loading,
             login,
             register,
             logout,
@@ -176,9 +185,10 @@ export const AuthProvider = ({ children }) => {
             addReview,
             updatePreferences,
             updateEmail,
-            updatePassword
+            updatePassword,
+            deleteAccount
         }}>
-            {children}
-        </AuthContext.Provider >
+            {!loading && children}
+        </AuthContext.Provider>
     );
 };

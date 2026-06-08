@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { BrowserRouter as Router, Routes, Route, useLocation, useNavigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { ShoppingListProvider } from './context/ShoppingListContext';
 import BottomNav from './components/BottomNav';
@@ -14,6 +14,8 @@ import { Privacy, Terms, About } from './pages/InfoPages';
 import CookingMode from './pages/CookingMode';
 import SplashScreen from './components/SplashScreen';
 import ShoppingList from './pages/ShoppingList';
+import Onboarding from './pages/Onboarding';
+import MockInterstitial from './components/MockInterstitial';
 import { AnimatePresence } from 'framer-motion';
 
 // Wrapper for scrolling to top
@@ -27,12 +29,39 @@ const ScrollToTop = () => {
 
 const AppContent = () => {
   const location = useLocation();
+  const navigate = useNavigate();
+  const [showAd, setShowAd] = useState(false);
+
+  useEffect(() => {
+    const hasSeen = localStorage.getItem('hasSeenOnboarding');
+    // Kullanıcı ilk defa giriyorsa ve onboarding sayfasında değilse yönlendir
+    if (!hasSeen && location.pathname !== '/onboarding') {
+      navigate('/onboarding', { replace: true });
+    }
+
+    // Reklam Sayacı Mantığı (Her 3 tarif görüntülemesinde 1 reklam)
+    if (location.pathname.startsWith('/recipe/')) {
+        let clicks = parseInt(localStorage.getItem('ad_click_count') || '0');
+        clicks += 1;
+        
+        // TEST AŞAMASI: 15 yerine 3 kullanıyoruz
+        if (clicks >= 3) {
+            setShowAd(true);
+            clicks = 0; // Sıfırla
+        }
+        localStorage.setItem('ad_click_count', clicks.toString());
+    }
+
+  }, [navigate, location.pathname]);
+
   return (
     <>
       <ScrollToTop />
+      <MockInterstitial isOpen={showAd} onClose={() => setShowAd(false)} />
       <div style={{ paddingBottom: '70px' }}> {/* Bottom Nav Spacer */}
         <AnimatePresence mode="wait">
           <Routes location={location} key={location.pathname}>
+            <Route path="/onboarding" element={<Onboarding />} />
             <Route path="/" element={<Home />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/explore" element={<Explore />} />
@@ -93,8 +122,8 @@ const App = () => {
 
 const ConditionalBottomNav = () => {
   const location = useLocation();
-  // Detail, Auth ve Cooking Mode sayfalarında bottom nav gizlensin
-  if (location.pathname.includes('/recipe/') || location.pathname.includes('/cook/') || location.pathname === '/auth' || location.pathname === '/shopping-list') return null;
+  // Detail, Auth, Cooking Mode, Shopping List ve Onboarding sayfalarında bottom nav gizlensin
+  if (location.pathname.includes('/recipe/') || location.pathname.includes('/cook/') || location.pathname === '/auth' || location.pathname === '/shopping-list' || location.pathname === '/onboarding') return null;
 
   return <BottomNav />;
 };

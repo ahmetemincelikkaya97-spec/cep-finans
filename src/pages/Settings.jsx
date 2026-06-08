@@ -6,10 +6,14 @@ import {
     Shield, FileText, Info, LogOut, Trash2, ChevronRight
 } from 'lucide-react';
 import { useTranslation } from '../translations';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const Settings = () => {
     const navigate = useNavigate();
-    const { user, logout, updatePreferences, updateEmail, updatePassword } = useAuth();
+    const { user, logout, updatePreferences, updateEmail, updatePassword, deleteAccount } = useAuth();
+
+    const [modal, setModal] = useState({ isOpen: false, type: 'alert', title: '', message: '', onConfirm: null });
+    const [inputValue, setInputValue] = useState('');
 
     // Local derived state for UI, usually synced with context, but here accessing directly
     const notifications = user?.preferences?.notifications ?? true;
@@ -17,33 +21,57 @@ const Settings = () => {
     const language = user?.preferences?.language ?? 'tr';
     const t = useTranslation(language);
 
+    const openModal = (type, title, message, onConfirm = null, defaultInputValue = '') => {
+        setInputValue(defaultInputValue);
+        setModal({ isOpen: true, type, title, message, onConfirm });
+    };
+
+    const closeModal = () => setModal({ ...modal, isOpen: false });
+
+    const handleConfirmModal = () => {
+        if (modal.onConfirm) {
+            if (modal.type === 'prompt') {
+                modal.onConfirm(inputValue);
+            } else {
+                modal.onConfirm();
+            }
+        }
+        closeModal();
+    };
+
     const handleLogout = () => {
-        if (window.confirm(t('confirm_logout'))) {
+        openModal('confirm', t('logout'), t('confirm_logout'), () => {
             logout();
             navigate('/auth');
-        }
+        });
     };
 
     const handleDeleteAccount = () => {
-        if (window.confirm(t('confirm_delete_account'))) {
-            logout();
-            navigate('/auth');
-        }
+        openModal('confirm', t('delete_account'), t('confirm_delete_account'), async () => {
+            const result = await deleteAccount();
+            if (result.success) {
+                navigate('/auth');
+            } else {
+                setTimeout(() => openModal('alert', 'Hata', result.message), 300);
+            }
+        });
     };
 
     const handleEmailChange = () => {
-        const newEmail = prompt(t('prompt_new_email'), user?.email);
-        if (newEmail && newEmail !== user?.email) {
-            updateEmail(newEmail);
-            alert(t('email_updated'));
-        }
+        openModal('prompt', t('email_label'), t('prompt_new_email'), (newEmail) => {
+            if (newEmail && newEmail !== user?.email) {
+                updateEmail(newEmail);
+                setTimeout(() => openModal('alert', 'Başarılı', t('email_updated')), 300);
+            }
+        }, user?.email);
     };
 
     const handlePasswordChange = () => {
-        const newPass = prompt(t('prompt_new_password'));
-        if (newPass) {
-            updatePassword(newPass);
-        }
+        openModal('prompt', t('change_password'), t('prompt_new_password'), (newPass) => {
+            if (newPass) {
+                updatePassword(newPass);
+            }
+        });
     };
 
     const toggleLanguage = () => {
@@ -160,6 +188,81 @@ const Settings = () => {
                 </div>
 
             </div>
+
+            {/* Custom UI Modal */}
+            <AnimatePresence>
+                {modal.isOpen && (
+                    <div style={{
+                        position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+                        backgroundColor: 'rgba(0,0,0,0.6)', zIndex: 999,
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        padding: '20px', backdropFilter: 'blur(5px)'
+                    }}>
+                        <motion.div 
+                            initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                            animate={{ opacity: 1, scale: 1, y: 0 }}
+                            exit={{ opacity: 0, scale: 0.9, y: 20 }}
+                            transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+                            style={{
+                                backgroundColor: 'var(--bg-card)', borderRadius: '24px',
+                                padding: '24px', width: '100%', maxWidth: '340px',
+                                boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)'
+                            }}
+                        >
+                            <h2 style={{ fontSize: '20px', fontWeight: 800, color: 'var(--text-main)', marginBottom: '12px', textAlign: 'center' }}>
+                                {modal.title}
+                            </h2>
+                            {modal.message && (
+                                <p style={{ fontSize: '15px', color: 'var(--text-secondary)', textAlign: 'center', marginBottom: '24px', lineHeight: 1.5 }}>
+                                    {modal.message}
+                                </p>
+                            )}
+
+                            {modal.type === 'prompt' && (
+                                <input
+                                    type="text"
+                                    value={inputValue}
+                                    onChange={(e) => setInputValue(e.target.value)}
+                                    autoFocus
+                                    style={{
+                                        width: '100%', padding: '16px', borderRadius: '16px',
+                                        border: '1px solid var(--border-light)', backgroundColor: 'var(--bg-app)',
+                                        color: 'var(--text-main)', marginBottom: '24px', outline: 'none',
+                                        fontSize: '16px'
+                                    }}
+                                />
+                            )}
+
+                            <div style={{ display: 'flex', gap: '12px' }}>
+                                {modal.type !== 'alert' && (
+                                    <button
+                                        onClick={closeModal}
+                                        style={{
+                                            flex: 1, padding: '16px', borderRadius: '16px',
+                                            backgroundColor: 'transparent', color: 'var(--text-main)',
+                                            fontWeight: 700, border: '1px solid var(--border-light)',
+                                            cursor: 'pointer'
+                                        }}
+                                    >
+                                        İptal
+                                    </button>
+                                )}
+                                <button
+                                    onClick={handleConfirmModal}
+                                    style={{
+                                        flex: 1, padding: '16px', borderRadius: '16px',
+                                        backgroundColor: modal.type === 'confirm' ? '#EF4444' : 'var(--primary)',
+                                        color: 'white', fontWeight: 700, border: 'none',
+                                        cursor: 'pointer'
+                                    }}
+                                >
+                                    Tamam
+                                </button>
+                            </div>
+                        </motion.div>
+                    </div>
+                )}
+            </AnimatePresence>
         </div>
     );
 };

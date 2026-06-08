@@ -40,15 +40,15 @@ const Auth = () => {
         }
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         setErrorMsg('');
 
         let result;
         if (isLogin) {
-            result = login(email, password);
+            result = await login(email, password);
         } else {
-            result = register(email, password, name);
+            result = await register(email, password, name);
         }
 
         if (result.success) {

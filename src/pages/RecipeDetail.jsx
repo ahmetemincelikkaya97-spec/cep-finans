@@ -6,6 +6,7 @@ import { ArrowLeft, Share2, Heart, Clock, Flame, ChefHat, PlayCircle, Bookmark, 
 import { useTranslation } from '../translations';
 import { useShoppingList } from '../context/ShoppingListContext';
 import { motion } from 'framer-motion';
+import MockAd from '../components/MockAd';
 
 const RecipeDetail = () => {
     const { id } = useParams();
@@ -230,6 +231,10 @@ const RecipeDetail = () => {
                             </div>
                         ))}
                     </div>
+                </div>
+
+                <div style={{ marginTop: '24px' }}>
+                    <MockAd type="banner" />
                 </div>
 
                 {/* Steps */}
