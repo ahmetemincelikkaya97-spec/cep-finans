@@ -83,6 +83,14 @@ const Home = () => {
         }
     });
 
+    const getGreeting = () => {
+        const hour = new Date().getHours();
+        if (hour < 6) return t('good_night_chef');
+        if (hour < 12) return t('good_morning_chef');
+        if (hour < 18) return t('good_afternoon_chef');
+        return t('good_evening_chef');
+    };
+
     return (
         <motion.div 
             initial="initial" animate="in" exit="out" variants={pageVariants} transition={pageTransition}
@@ -100,10 +108,10 @@ const Home = () => {
                         </div>
                         <div>
                             <div style={{ fontSize: '13px', color: 'var(--text-secondary)', fontWeight: 600 }}>
-                                {t('welcome_chef')}
+                                {getGreeting()}
                             </div>
                             <div style={{ fontSize: '20px', fontWeight: 800, color: 'var(--text-main)', letterSpacing: '-0.5px' }}>
-                                {t('good_morning')} {user?.name || t('guest')}!
+                                {t('what_are_we_cooking')}
                             </div>
                         </div>
                     </div>

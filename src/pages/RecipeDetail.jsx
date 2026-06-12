@@ -22,8 +22,8 @@ const RecipeDetail = () => {
     const [rating, setRating] = useState(5);
     const [comment, setComment] = useState("");
 
-    // State for shopping list button animation
     const [isAdded, setIsAdded] = useState(false);
+    const [showLoginWarning, setShowLoginWarning] = useState(false);
 
     // Mock reviews state (starts with some fake reviews)
     const [mockReviews, setMockReviews] = useState([]);
@@ -74,7 +74,8 @@ const RecipeDetail = () => {
 
     const handleAction = (action) => {
         if (!user) {
-            alert(language === 'en' ? "You must be logged in to perform this action." : "Bu işlemi yapmak için giriş yapmalısınız.");
+            setShowLoginWarning(true);
+            setTimeout(() => setShowLoginWarning(false), 5000);
             return;
         }
         action();
@@ -345,6 +346,34 @@ const RecipeDetail = () => {
                 </div>
 
             </div>
+
+            {/* Login Warning Toast */}
+            {showLoginWarning && (
+                <motion.div 
+                    initial={{ opacity: 0, y: -20, x: '-50%' }} 
+                    animate={{ opacity: 1, y: 0, x: '-50%' }} 
+                    style={{
+                        position: 'fixed', top: '80px', left: '50%',
+                        backgroundColor: 'var(--bg-card)', color: 'var(--text-main)',
+                        padding: '12px 24px', borderRadius: '50px',
+                        boxShadow: 'var(--shadow-lg)', zIndex: 1000,
+                        fontWeight: 700, fontSize: '14px', border: '2px solid var(--primary)',
+                        display: 'flex', alignItems: 'center', gap: '10px', whiteSpace: 'nowrap'
+                    }}>
+                    <User size={18} color="var(--primary)" />
+                    <span>{language === 'en' ? "Please log in to continue." : "Bu işlemi yapmak için giriş yapmalısınız."}</span>
+                    <button 
+                        onClick={() => navigate('/profile')}
+                        style={{
+                            background: 'none', border: 'none', color: 'var(--primary)', 
+                            fontWeight: 800, textDecoration: 'underline', cursor: 'pointer',
+                            padding: 0, marginLeft: '4px', fontSize: '14px'
+                        }}
+                    >
+                        {language === 'en' ? "Log In" : "Giriş Yap"}
+                    </button>
+                </motion.div>
+            )}
 
             {/* Bottom Floating Action Button */}
             <div style={{
