@@ -21,18 +21,22 @@
 <body>
   <div id="root"></div>
   <script type="module" src="/src/main.jsx"></script>
-  
-  <!-- Service Worker Registration -->
+  <!-- Service Worker Unregistration to fix caching bug -->
   <script>
     if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js')
-          .then(registration => {
-            console.log('ServiceWorker registration successful with scope: ', registration.scope);
-          })
-          .catch(err => {
-            console.log('ServiceWorker registration failed: ', err);
-          });
+      navigator.serviceWorker.getRegistrations().then(function(registrations) {
+        for(let registration of registrations) {
+          registration.unregister();
+          console.log('ServiceWorker unregistered successfully');
+        }
+      }).catch(function(err) {
+        console.log('ServiceWorker unregistration failed: ', err);
+      });
+      
+      // Clear cache storage just in case
+      caches.keys().then(function(names) {
+        for (let name of names)
+            caches.delete(name);
       });
     }
   </script>

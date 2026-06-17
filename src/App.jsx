@@ -17,9 +17,8 @@ import ShoppingList from './pages/ShoppingList';
 import Onboarding from './pages/Onboarding';
 import MockInterstitial from './components/MockInterstitial';
 import { AnimatePresence } from 'framer-motion';
-import { AdMob } from '@capacitor-community/admob';
 import { Capacitor } from '@capacitor/core';
-
+import { AdMob } from '@capacitor-community/admob';
 // Wrapper for scrolling to top
 const ScrollToTop = () => {
   const { pathname } = useLocation();
@@ -41,19 +40,19 @@ const AppContent = () => {
       navigate('/onboarding', { replace: true });
     }
 
-    // Reklam Sayacı Mantığı (Her 15 tarif görüntülemesinde 1 reklam)
+    // Reklam Sayacı Mantığı (Her 10 tarif görüntülemesinde 1 reklam)
     if (location.pathname.startsWith('/recipe/')) {
         let clicks = parseInt(localStorage.getItem('ad_click_count') || '0');
         clicks += 1;
         
-        if (clicks >= 15) {
+        if (clicks >= 10) {
             if (Capacitor.isNativePlatform()) {
                 const showRealAd = async () => {
                     try {
                         await AdMob.prepareInterstitial({
                             adId: 'ca-app-pub-3940256099942544/1033173712', // Google Interstitial Test ID
-                            autoShow: true
                         });
+                        await AdMob.showInterstitial();
                     } catch (e) {
                         console.error('AdMob Interstitial Error:', e);
                     }
@@ -66,7 +65,6 @@ const AppContent = () => {
         }
         localStorage.setItem('ad_click_count', clicks.toString());
     }
-
   }, [navigate, location.pathname]);
 
   return (

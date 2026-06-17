@@ -29,8 +29,7 @@ const Home = () => {
     const language = user?.preferences?.language || localStorage.getItem('guest_lang') || 'tr';
     const t = useTranslation(language);
 
-    // 1. Günün Menüsü Mantığı: Tarihe göre 3 tarif seçer.
-    const dailyMenu = useMemo(() => {
+    const { dailyMenu, traditionalTr, worldCuisines } = useMemo(() => {
         const today = new Date().toISOString().split('T')[0];
         let seed = 0;
         for (let i = 0; i < today.length; i++) {
@@ -47,41 +46,83 @@ const Home = () => {
             return list[Math.floor(seededRandom() * list.length)];
         };
 
-        // Kategorilere ayır
+        const shuffleArray = (array) => {
+            let arr = [...array];
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(seededRandom() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        };
+
+        // 1. Günün Menüsü
         const lunchOptions = recipes.filter(r => r.category === 'soup' || r.category === 'veg' || r.tags?.includes('Salata'));
         const dinnerOptions = recipes.filter(r => r.category === 'kebab' || r.category === 'tr' || r.category === 'main' || r.tags?.includes('Et'));
         const dessertOptions = recipes.filter(r => r.category === 'dessert' || r.tags?.includes('Tatlı'));
 
-        // Deterministik seçimler
         let lunch = getRandomFrom(lunchOptions) || recipes[0];
         let dinner = getRandomFrom(dinnerOptions) || recipes[1];
-
         let dessert = getRandomFrom(dessertOptions);
         if (!dessert) {
             const remaining = recipes.filter(r => r.id !== lunch.id && r.id !== dinner.id);
             dessert = getRandomFrom(remaining) || recipes[2];
         }
-
-        // Remove types from data object if not needed, but keep structure for map
-        return [
+        
+        const daily = [
             { id: 'lunch', data: lunch },
             { id: 'dinner', data: dinner },
             { id: 'dessert', data: dessert }
         ];
+
+        // 2. Türk Mutfağı (Her gün değişen: 1 Çorba, 1 Ana Yemek, 1 Zeytinyağlı, 1 Börek, 1 Tatlı)
+        const worldCategories = ['it', 'es', 'jp', 'mx', 'de', 'cn', 'fr', 'us', 'in'];
+        const allTr = recipes.filter(r => (r.isTraditional || r.category === 'tr' || r.tags?.includes('Türk')) && !worldCategories.includes(r.category));
+        
+        const trSoups = allTr.filter(r => r.category === 'soup' || r.tags?.includes('Çorba'));
+        const trMains = allTr.filter(r => r.category === 'main' || r.category === 'kebab' || r.tags?.includes('Ana Yemek') || r.tags?.includes('Et'));
+        const trVegs = allTr.filter(r => r.category === 'veg' || r.tags?.includes('Zeytinyağlı') || r.tags?.includes('Sebze'));
+        const trPastrys = allTr.filter(r => r.category === 'pastry' || r.tags?.includes('Börek') || r.tags?.includes('Hamur'));
+        const trDesserts = allTr.filter(r => r.category === 'dessert' || r.tags?.includes('Tatlı'));
+
+        const trList = [
+            getRandomFrom(trSoups),
+            getRandomFrom(trMains),
+            getRandomFrom(trVegs),
+            getRandomFrom(trPastrys),
+            getRandomFrom(trDesserts)
+        ].filter(Boolean);
+
+        if (trList.length < 5) {
+            const includedIds = trList.map(r => r.id);
+            const others = shuffleArray(allTr.filter(r => !includedIds.includes(r.id)));
+            trList.push(...others.slice(0, 5 - trList.length));
+        }
+
+        // 3. Dünya Mutfağı (Her gün değişen yabancı yemekler)
+        const allWorld = recipes.filter(r => worldCategories.includes(r.category) || r.tags?.includes('Dünya'));
+        
+        const worldList = [];
+        const availableWorld = shuffleArray([...allWorld]);
+        
+        const usedWorldCats = new Set();
+        for (const recipe of availableWorld) {
+            if (!usedWorldCats.has(recipe.category)) {
+                worldList.push(recipe);
+                usedWorldCats.add(recipe.category);
+            }
+            if (worldList.length === 5) break;
+        }
+        
+        if (worldList.length < 5) {
+            const remainingWorld = availableWorld.filter(r => !worldList.find(w => w.id === r.id));
+            worldList.push(...remainingWorld.slice(0, 5 - worldList.length));
+        }
+
+        return { dailyMenu: daily, traditionalTr: trList, worldCuisines: worldList };
     }, []);
 
-    // 2. Filtrelemeler
+    // Popüler tarifler sabit kalabilir veya filtre eklenebilir
     const popularRecipes = recipes.filter(r => r.rating >= 4.7).slice(0, 5);
-    const traditionalTr = recipes.filter(r => r.isTraditional || r.category === 'tr' || r.tags?.includes('Türk')).slice(0, 5);
-    
-    const worldCuisineCategories = ['it', 'es', 'jp', 'mx', 'de', 'cn'];
-    const worldCuisines = [];
-    worldCuisineCategories.forEach(cat => {
-        const recipeForCat = recipes.find(r => r.category === cat);
-        if (recipeForCat) {
-            worldCuisines.push(recipeForCat);
-        }
-    });
 
     const getGreeting = () => {
         const hour = new Date().getHours();

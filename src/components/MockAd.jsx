@@ -1,7 +1,10 @@
 import React from 'react';
 import { Info } from 'lucide-react';
+import { Capacitor } from '@capacitor/core';
 
 const MockAd = ({ type = 'banner' }) => {
+    if (Capacitor.isNativePlatform()) return null;
+
     // Banner: 320x50, Rectangle: 300x250
     const isBanner = type === 'banner';
     const height = isBanner ? '60px' : '250px';
