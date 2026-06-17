@@ -17,6 +17,8 @@ import ShoppingList from './pages/ShoppingList';
 import Onboarding from './pages/Onboarding';
 import MockInterstitial from './components/MockInterstitial';
 import { AnimatePresence } from 'framer-motion';
+import { AdMob } from '@capacitor-community/admob';
+import { Capacitor } from '@capacitor/core';
 
 // Wrapper for scrolling to top
 const ScrollToTop = () => {
@@ -39,14 +41,27 @@ const AppContent = () => {
       navigate('/onboarding', { replace: true });
     }
 
-    // Reklam Sayacı Mantığı (Her 3 tarif görüntülemesinde 1 reklam)
+    // Reklam Sayacı Mantığı (Her 15 tarif görüntülemesinde 1 reklam)
     if (location.pathname.startsWith('/recipe/')) {
         let clicks = parseInt(localStorage.getItem('ad_click_count') || '0');
         clicks += 1;
         
-        // TEST AŞAMASI: 15 yerine 3 kullanıyoruz
-        if (clicks >= 3) {
-            setShowAd(true);
+        if (clicks >= 15) {
+            if (Capacitor.isNativePlatform()) {
+                const showRealAd = async () => {
+                    try {
+                        await AdMob.prepareInterstitial({
+                            adId: 'ca-app-pub-3940256099942544/1033173712', // Google Interstitial Test ID
+                            autoShow: true
+                        });
+                    } catch (e) {
+                        console.error('AdMob Interstitial Error:', e);
+                    }
+                };
+                showRealAd();
+            } else {
+                setShowAd(true); // Web (Mock)
+            }
             clicks = 0; // Sıfırla
         }
         localStorage.setItem('ad_click_count', clicks.toString());
@@ -88,8 +103,22 @@ const AppContent = () => {
 const App = () => {
   const [showSplash, setShowSplash] = React.useState(true);
 
-  // Theme Initialization
+  // Theme and AdMob Initialization
   useEffect(() => {
+    const initAdMob = async () => {
+      if (Capacitor.isNativePlatform()) {
+        try {
+          await AdMob.initialize({
+            requestTrackingAuthorization: true,
+          });
+          console.log('AdMob initialized successfully');
+        } catch (e) {
+          console.error('AdMob initialization error:', e);
+        }
+      }
+    };
+    initAdMob();
+
     const savedTheme = localStorage.getItem('theme');
     const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
 
