@@ -7,6 +7,8 @@ import { useTranslation } from '../translations';
 import { useShoppingList } from '../context/ShoppingListContext';
 import { motion } from 'framer-motion';
 import MockAd from '../components/MockAd';
+import { db } from '../firebase';
+import { collection, addDoc, query, where, orderBy, onSnapshot, serverTimestamp } from 'firebase/firestore';
 
 const RecipeDetail = () => {
     const { id } = useParams();
@@ -25,37 +27,44 @@ const RecipeDetail = () => {
     const [isAdded, setIsAdded] = useState(false);
     const [showLoginWarning, setShowLoginWarning] = useState(false);
 
-    // Mock reviews state (starts with some fake reviews)
-    const [mockReviews, setMockReviews] = useState([]);
+    // Global reviews from Firestore
+    const [globalReviews, setGlobalReviews] = useState([]);
 
     const recipe = recipes.find(r => r.id === parseInt(id));
 
     useEffect(() => {
         window.scrollTo(0, 0);
-        // Generate Mock Reviews
-        if (recipe) {
-            const seed = recipe.id * 7;
-            const count = Math.floor((Math.sin(seed) + 1) * 3) + 2; // 2 to 5 reviews
-            const names = ["Ayşe Y.", "Mehmet K.", "Zeynep S.", "Can A.", "Elif B."];
-            const comments = [
-                "Harika bir tarif, bayıldım!",
-                "Biraz tuzu fazla kaçtı ama benim hatam olabilir, yine de güzel.",
-                "Tam kıvamında oldu, teşekkürler.",
-                "Favori tarifim oldu, kesinlikle tavsiye ederim.",
-                "Evdekiler çok beğendi, elinize sağlık."
-            ];
-            const generated = [];
-            for (let i = 0; i < count; i++) {
-                generated.push({
-                    id: `mock-${i}`,
-                    name: names[(recipe.id + i) % names.length],
-                    rating: 4 + (i % 2), // 4 or 5 stars
-                    comment: comments[(recipe.id + i) % comments.length],
-                    date: new Date(Date.now() - (i * 86400000 * 2)).toISOString().split('T')[0] // pseudo dates
-                });
-            }
-            setMockReviews(generated);
-        }
+        if (!recipe) return;
+
+        // Fetch real-time reviews from Firestore
+        const reviewsRef = collection(db, 'reviews');
+        const q = query(
+            reviewsRef, 
+            where('recipeId', '==', recipe.id),
+            orderBy('createdAt', 'desc')
+        );
+
+        const unsubscribe = onSnapshot(q, (snapshot) => {
+            const fetchedReviews = snapshot.docs.map(doc => {
+                const data = doc.data();
+                // Format date nicely
+                let formattedDate = "";
+                if (data.createdAt) {
+                    const dateObj = data.createdAt.toDate();
+                    formattedDate = dateObj.toISOString().split('T')[0];
+                }
+                return {
+                    id: doc.id,
+                    ...data,
+                    date: formattedDate
+                };
+            });
+            setGlobalReviews(fetchedReviews);
+        }, (error) => {
+            console.error("Error fetching reviews:", error);
+        });
+
+        return () => unsubscribe();
     }, [id, recipe]);
 
     if (!recipe) return <div className="container">{t('recipe_not_found')}</div>;
@@ -66,10 +75,11 @@ const RecipeDetail = () => {
     // Get user's review for this recipe
     const userReview = user?.reviews?.find(r => r.recipeId === recipe.id);
 
-    // Combine reviews: User's review first (if exists), then mock reviews
-    const allReviews = userReview
-        ? [{ ...userReview, name: user.name || (language === 'en' ? "You" : "Sen"), isUser: true }, ...mockReviews]
-        : mockReviews;
+    // Map global reviews to determine if current user wrote them
+    const allReviews = globalReviews.map(r => ({
+        ...r,
+        isUser: user ? r.userId === user.uid : false
+    }));
 
 
     const handleAction = (action) => {
@@ -87,12 +97,29 @@ const RecipeDetail = () => {
         });
     };
 
-    const handleSubmitReview = (e) => {
+    const handleSubmitReview = async (e) => {
         e.preventDefault();
-        handleAction(() => {
+        handleAction(async () => {
             if (comment.trim()) {
-                addReview(recipe.id, rating, comment);
-                setComment("");
+                try {
+                    // Write to global reviews collection
+                    await addDoc(collection(db, 'reviews'), {
+                        recipeId: recipe.id,
+                        userId: user.uid,
+                        name: user.name || (language === 'en' ? "Anonymous" : "Anonim"),
+                        rating: rating,
+                        comment: comment,
+                        createdAt: serverTimestamp()
+                    });
+                    
+                    // Also save locally via context
+                    addReview(recipe.id, rating, comment);
+                    
+                    setComment("");
+                } catch (error) {
+                    console.error("Error adding review:", error);
+                    alert(language === 'en' ? "Error sending review." : "Yorum gönderilirken hata oluştu.");
+                }
             }
         });
     };

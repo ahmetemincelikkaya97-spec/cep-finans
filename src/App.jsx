@@ -18,7 +18,6 @@ import Onboarding from './pages/Onboarding';
 import MockInterstitial from './components/MockInterstitial';
 import { AnimatePresence } from 'framer-motion';
 import { Capacitor } from '@capacitor/core';
-import { AdMob } from '@capacitor-community/admob';
 // Wrapper for scrolling to top
 const ScrollToTop = () => {
   const { pathname } = useLocation();
@@ -49,6 +48,7 @@ const AppContent = () => {
             if (Capacitor.isNativePlatform()) {
                 const showRealAd = async () => {
                     try {
+                        const { AdMob } = await import('@capacitor-community/admob');
                         await AdMob.prepareInterstitial({
                             adId: 'ca-app-pub-3940256099942544/1033173712', // Google Interstitial Test ID
                         });
@@ -106,6 +106,7 @@ const App = () => {
     const initAdMob = async () => {
       if (Capacitor.isNativePlatform()) {
         try {
+          const { AdMob } = await import('@capacitor-community/admob');
           await AdMob.initialize({
             requestTrackingAuthorization: true,
           });
