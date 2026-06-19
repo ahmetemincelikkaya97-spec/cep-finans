@@ -50,7 +50,7 @@ const AppContent = () => {
                     try {
                         const { AdMob } = await import('@capacitor-community/admob');
                         await AdMob.prepareInterstitial({
-                            adId: 'ca-app-pub-3940256099942544/1033173712', // Google Interstitial Test ID
+                            adId: 'ca-app-pub-3551268889561467/4249643871', // Google Interstitial Real ID
                         });
                         await AdMob.showInterstitial();
                     } catch (e) {

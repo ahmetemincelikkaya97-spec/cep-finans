@@ -177,10 +177,40 @@ const CookingMode = () => {
         if (!recipe.ingredients) return [];
         const text = stepText.toLowerCase();
         
+        const ignoreWords = [
+            'toz', 'tozu', 'sıvı', 'su', 'suyu', 'yemek', 'kaşığı', 'kaşık', 
+            'tatlı', 'çay', 'bardak', 'bardağı', 'paket', 'adet', 'kırmızı', 
+            'beyaz', 'sıcak', 'soğuk', 'ılık', 'küçük', 'büyük', 'orta', 'boy', 
+            'gram', 'litre', 'ml', 'kırılmış', 'rendesi', 'rendelenmiş', 'taze',
+            'için', 'üzeri', 'süslemek', 've', 'ile', 'yarım', 'çeyrek'
+        ];
+
         return recipe.ingredients.filter(ing => {
-            const cleanName = ing.name.replace(/\(.*?\)/g, '').trim().toLowerCase();
-            const words = cleanName.split(' ').filter(w => w.length > 2);
-            return words.some(word => text.includes(word));
+            const lowerName = ing.name.toLowerCase();
+            
+            // Eğer malzemede parantez içinde bağlam varsa, o bağlamın adımda geçip geçmediğini kontrol et
+            const hasContext = lowerName.match(/\((.*?)\)/);
+            if (hasContext) {
+                const context = hasContext[1];
+                if (context.includes('sos') && !text.includes('sos')) return false;
+                if (context.includes('krema') && !text.includes('krema')) return false;
+                if (context.includes('şerbet') && !text.includes('şerbet')) return false;
+                if (context.includes('üzeri') && !text.includes('üzeri')) return false;
+                if ((context.includes('iç harc') || context.includes('iç')) && 
+                    !text.includes('harc') && !text.includes('iç') && !context.includes('kek')) return false;
+            }
+
+            const cleanName = lowerName.replace(/\(.*?\)/g, '').trim();
+            
+            // Tam isim eşleşmesi varsa direkt kabul et
+            if (text.includes(cleanName)) return true;
+
+            // Kelimelere ayır, genel kelimeleri çıkar
+            const words = cleanName.split(' ')
+                .map(w => w.replace(/[^a-zçğıöşü]/g, ''))
+                .filter(w => w.length > 2 && !ignoreWords.includes(w));
+            
+            return words.length > 0 && words.some(word => text.includes(word));
         });
     };
 
