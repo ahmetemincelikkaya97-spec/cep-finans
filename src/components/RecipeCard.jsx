@@ -153,30 +153,7 @@ const RecipeCard = ({ recipe, variant = 'vertical', showCountryBadge = false }) 
                         </div>
                     </div>
 
-                    {/* İstatistikler (Puan, Favori, Yorum) */}
-                    <div style={{
-                        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                        marginTop: '12px', paddingTop: '8px', borderTop: '1px solid var(--border-light)'
-                    }}>
-                        {/* Puan */}
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '3px', fontSize: '11px', fontWeight: 700, color: '#F59E0B' }}>
-                            <Star size={12} fill="#F59E0B" />
-                            <span>{recipe.rating}</span>
-                        </div>
-
-                        <div style={{ display: 'flex', gap: '8px' }}>
-                            {/* Favori Sayısı */}
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '3px', fontSize: '10px', color: 'var(--text-caption)' }}>
-                                <Heart size={10} fill="currentColor" />
-                                <span>{stats.favorites}</span>
-                            </div>
-                            {/* Yorum Sayısı */}
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '3px', fontSize: '10px', color: 'var(--text-caption)' }}>
-                                <MessageCircle size={10} fill="currentColor" />
-                                <span>{stats.reviews}</span>
-                            </div>
-                        </div>
-                    </div>
+                    {/* İstatistikler (Puan, Favori, Yorum) Kaldırıldı */}
 
                 </div>
             </div>
