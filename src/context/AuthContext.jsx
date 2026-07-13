@@ -21,21 +21,27 @@ export const AuthProvider = ({ children }) => {
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
             if (firebaseUser) {
-                // Fetch profile data from Firestore
-                const docRef = doc(db, 'users', firebaseUser.uid);
-                const docSnap = await getDoc(docRef);
-                
-                if (docSnap.exists()) {
-                    setUser({ ...firebaseUser, ...docSnap.data() });
-                } else {
-                    // Create default doc if missing
-                    const defaultData = {
-                        name: firebaseUser.displayName || 'Mars Şef',
-                        saved: [], favorites: [], history: [], reviews: [],
-                        preferences: { notifications: true, darkMode: false, language: 'tr' }
-                    };
-                    await setDoc(docRef, defaultData);
-                    setUser({ ...firebaseUser, ...defaultData });
+                try {
+                    // Fetch profile data from Firestore
+                    const docRef = doc(db, 'users', firebaseUser.uid);
+                    const docSnap = await getDoc(docRef);
+                    
+                    if (docSnap.exists()) {
+                        setUser({ ...firebaseUser, ...docSnap.data() });
+                    } else {
+                        // Create default doc if missing
+                        const defaultData = {
+                            name: firebaseUser.displayName || 'Mars Şef',
+                            saved: [], favorites: [], history: [], reviews: [],
+                            preferences: { notifications: true, darkMode: false, language: 'tr' }
+                        };
+                        await setDoc(docRef, defaultData);
+                        setUser({ ...firebaseUser, ...defaultData });
+                    }
+                } catch (error) {
+                    console.error("Firebase yetki veya bağlantı hatası:", error);
+                    // Hata olsa bile kullanıcıyı giriş yapmış kabul edelim ama boş verilerle
+                    setUser({ ...firebaseUser, saved: [], favorites: [], history: [], reviews: [], preferences: {} });
                 }
             } else {
                 setUser(null);
@@ -188,7 +194,7 @@ export const AuthProvider = ({ children }) => {
             updatePassword,
             deleteAccount
         }}>
-            {!loading && children}
+            {loading ? <div style={{ color: 'white', padding: '20px', textAlign: 'center', marginTop: '50px' }}>Yükleniyor... (Veritabanı bağlantısı bekleniyor)</div> : children}
         </AuthContext.Provider>
     );
 };
