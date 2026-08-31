@@ -1,5 +1,5 @@
 export const LEVELS = [
-    { name: 'Mutfak Çaylağı', minXp: 0, color: '#3b82f6' },
+    { name: 'Mutfak Çaylağı', minXp: 0, color: '#F05528' },
     { name: 'Ev Aşçısı', minXp: 100, color: '#3b82f6' },
     { name: 'Yetenekli Şef', minXp: 300, color: '#8b5cf6' },
     { name: 'Mutfak Ustası', minXp: 700, color: '#f59e0b' },
