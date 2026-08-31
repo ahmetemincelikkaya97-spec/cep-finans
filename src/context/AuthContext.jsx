@@ -192,7 +192,8 @@ export const AuthProvider = ({ children }) => {
             updatePreferences,
             updateEmail,
             updatePassword,
-            deleteAccount
+            deleteAccount,
+            updateUserDoc
         }}>
             {loading ? <div style={{ color: 'white', padding: '20px', textAlign: 'center', marginTop: '50px' }}>Yükleniyor... (Veritabanı bağlantısı bekleniyor)</div> : children}
         </AuthContext.Provider>

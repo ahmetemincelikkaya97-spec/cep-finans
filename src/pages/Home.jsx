@@ -143,9 +143,13 @@ const Home = () => {
                         <div style={{
                             width: '45px', height: '45px', background: '#FFE4D6', borderRadius: '50%',
                             display: 'flex', alignItems: 'center', justifyContent: 'center', border: '2px solid var(--bg-card)',
-                            boxShadow: '0 2px 10px rgba(0,0,0,0.05)'
+                            boxShadow: '0 2px 10px rgba(0,0,0,0.05)', overflow: 'hidden'
                         }}>
-                            <img src={user?.avatar || "https://api.dicebear.com/7.x/avataaars/svg?seed=Felix"} alt="Avatar" width="36" />
+                            <img 
+                                src={user?.avatar || "https://api.dicebear.com/7.x/avataaars/svg?seed=Felix"} 
+                                alt="Avatar" 
+                                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                            />
                         </div>
                         <div>
                             <div style={{ fontSize: '13px', color: 'var(--text-secondary)', fontWeight: 600 }}>

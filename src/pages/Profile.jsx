@@ -1,11 +1,12 @@
 import React from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import { Settings, Bookmark, Heart, Clock, ChevronRight, Star, LogOut, ShoppingCart } from 'lucide-react';
+import { Settings, Bookmark, Heart, Clock, ChevronRight, Star, LogOut, ShoppingCart, Edit2, Trophy } from 'lucide-react';
 import { recipes } from '../data/recipes';
 import RecipeCard from '../components/RecipeCard';
 import { useTranslation } from '../translations';
 import { motion } from 'framer-motion';
+import { calculateGamification } from '../utils/gamification';
 
 const pageVariants = {
     initial: { opacity: 0, x: 20 },
@@ -54,12 +55,15 @@ const Profile = () => {
         );
     }
 
-    // 2. GÜVENLİ VERİ ERİŞİMİ: Kullanıcı verisi eksik olsa bile varsayılanlar devreye girer.
-    const safeStats = {
-        cooked: user.history?.length || 0,
-        saved: user.saved?.length || 0,
-        reviews: user.reviews?.length || 0
-    };
+    // 2. GÜVENLİ VERİ ERİŞİMİ & OYUNLAŞTIRMA (GAMIFICATION):
+    const gamification = calculateGamification(user) || {};
+    const { 
+        stats = { cooked: 0, saved: 0, reviews: 0, favorites: 0 }, 
+        xp = 0, 
+        currentLevel = { name: 'Acemi', color: '#94a3b8' }, 
+        levelProgress = 0, 
+        earnedBadges = [] 
+    } = gamification;
 
     // Show only saved recipes that actually exist in user's list
     const savedRecipes = recipes.filter(r => user.saved?.includes(r.id)).slice(0, 3);
@@ -81,11 +85,15 @@ const Profile = () => {
                     </button>
                 </div>
 
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
-                    <div style={{
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', position: 'relative' }}>
+                    <div 
+                        onClick={() => navigate('/edit-profile')}
+                        style={{
                         width: '100px', height: '100px', borderRadius: '50%',
-                        border: '4px solid var(--bg-card)', boxShadow: '0 4px 14px rgba(0,0,0,0.1)',
-                        overflow: 'hidden', marginBottom: '16px'
+                        border: `4px solid ${currentLevel.color}`, 
+                        boxShadow: `0 4px 20px ${currentLevel.color}60`,
+                        overflow: 'hidden', marginBottom: '16px',
+                        backgroundColor: 'var(--bg-app)', cursor: 'pointer', position: 'relative'
                     }}>
                         <img
                             src={user.avatar || "https://api.dicebear.com/7.x/avataaars/svg?seed=Felix"}
@@ -99,9 +107,34 @@ const Profile = () => {
                     <div style={{ fontSize: '14px', color: 'var(--text-secondary)', marginBottom: '12px' }}>
                         {user.email || t('no_email')}
                     </div>
-                    <p style={{ fontSize: '14px', color: 'var(--text-secondary)', maxWidth: '280px', lineHeight: 1.5 }}>
+                    <p style={{ fontSize: '14px', color: 'var(--text-secondary)', maxWidth: '280px', lineHeight: 1.5, marginBottom: '12px' }}>
                         {user.bio || t('bio_default')}
                     </p>
+                    
+                    {/* Edit Profile Button */}
+                    <button 
+                        onClick={() => navigate('/edit-profile')}
+                        style={{ 
+                            padding: '8px 24px', borderRadius: '20px', fontSize: '12px', fontWeight: 700,
+                            backgroundColor: 'var(--bg-app)', border: '1px solid var(--border-light)', color: 'var(--text-main)',
+                            display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '12px'
+                        }}>
+                        <Edit2 size={12} /> Profili Düzenle
+                    </button>
+
+                    {/* Level & XP Progress */}
+                    <div style={{ width: '100%', maxWidth: '300px', marginTop: '20px', marginBottom: '8px' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '14px', fontWeight: 800, marginBottom: '8px' }}>
+                            <span style={{ color: currentLevel.color }}>{currentLevel.name}</span>
+                            <span style={{ color: 'var(--text-secondary)' }}>{xp} XP</span>
+                        </div>
+                        <div style={{ width: '100%', height: '10px', backgroundColor: 'var(--border-light)', borderRadius: '12px', overflow: 'hidden' }}>
+                            <motion.div 
+                                initial={{ width: 0 }} animate={{ width: `${levelProgress}%` }} transition={{ duration: 1, ease: "easeOut" }}
+                                style={{ height: '100%', backgroundColor: currentLevel.color, borderRadius: '12px' }} 
+                            />
+                        </div>
+                    </div>
 
                     {/* Stats Row */}
                     <div style={{
@@ -109,30 +142,56 @@ const Profile = () => {
                         padding: '16px 24px', backgroundColor: 'var(--bg-app)', borderRadius: '16px'
                     }}>
                         <div style={{ textAlign: 'center' }}>
-                            <div style={{ fontSize: '18px', fontWeight: 800, color: 'var(--primary)' }}>{safeStats.cooked}</div>
+                            <div style={{ fontSize: '18px', fontWeight: 800, color: 'var(--primary)' }}>{stats.cooked}</div>
                             <div style={{ fontSize: '11px', color: 'var(--text-secondary)', fontWeight: 600 }}>{t('cooked_stat')}</div>
                         </div>
                         <div style={{ width: '1px', backgroundColor: 'var(--border-light)' }}></div>
                         <div style={{ textAlign: 'center' }}>
-                            <div style={{ fontSize: '18px', fontWeight: 800, color: 'var(--text-main)' }}>{safeStats.saved}</div>
+                            <div style={{ fontSize: '18px', fontWeight: 800, color: 'var(--text-main)' }}>{stats.saved}</div>
                             <div style={{ fontSize: '11px', color: 'var(--text-secondary)', fontWeight: 600 }}>{t('saved_stat')}</div>
                         </div>
                         <div style={{ width: '1px', backgroundColor: 'var(--border-light)' }}></div>
                         <div style={{ textAlign: 'center' }}>
-                            <div style={{ fontSize: '18px', fontWeight: 800, color: 'var(--text-main)' }}>{safeStats.reviews}</div>
+                            <div style={{ fontSize: '18px', fontWeight: 800, color: 'var(--text-main)' }}>{stats.reviews}</div>
                             <div style={{ fontSize: '11px', color: 'var(--text-secondary)', fontWeight: 600 }}>{t('reviews_stat')}</div>
                         </div>
                     </div>
                 </div>
             </div>
 
+            {/* Badges Section */}
+            <div className="container" style={{ marginTop: '24px' }}>
+                <h3 style={{ fontSize: '16px', fontWeight: 800, color: 'var(--text-main)', marginBottom: '12px' }}>Rozetlerim</h3>
+                <div style={{ display: 'flex', gap: '16px', overflowX: 'auto', paddingBottom: '12px', scrollbarWidth: 'none' }}>
+                    {earnedBadges.map((badge) => (
+                        <div key={badge.id} style={{ 
+                            minWidth: '70px', display: 'flex', flexDirection: 'column', alignItems: 'center',
+                            opacity: badge.earned ? 1 : 0.4, filter: badge.earned ? 'none' : 'grayscale(100%)'
+                        }}>
+                            <div style={{ 
+                                width: '56px', height: '56px', borderRadius: '50%', 
+                                backgroundColor: badge.earned ? 'var(--bg-card)' : 'var(--bg-app)', 
+                                border: badge.earned ? `2px solid ${currentLevel.color}` : '2px dashed var(--border-light)',
+                                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                fontSize: '24px', boxShadow: badge.earned ? '0 4px 12px rgba(0,0,0,0.05)' : 'none',
+                                marginBottom: '8px', transition: 'all 0.3s ease'
+                            }}>
+                                {badge.icon}
+                            </div>
+                            <span style={{ fontSize: '10px', fontWeight: 700, textAlign: 'center', color: 'var(--text-main)' }}>{badge.name}</span>
+                        </div>
+                    ))}
+                </div>
+            </div>
+
             {/* Menu Items */}
-            <div className="container" style={{ marginTop: '24px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            <div className="container" style={{ marginTop: '16px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                <MenuItem icon={<Trophy size={20} color="var(--primary)" />} label="Liderlik Tablosu" onClick={() => navigate('/leaderboard')} />
                 <MenuItem icon={<ShoppingCart size={20} />} label={t('shopping_list')} onClick={() => navigate('/shopping-list')} />
-                <MenuItem icon={<Bookmark size={20} />} label={t('saved_recipes')} count={safeStats.saved} onClick={() => navigate('/saved')} />
-                <MenuItem icon={<Heart size={20} />} label={t('favorites')} count={user.favorites?.length} onClick={() => navigate('/favorites')} />
-                <MenuItem icon={<Star size={20} />} label={t('my_reviews_ratings')} count={safeStats.reviews} onClick={() => navigate('/reviews')} />
-                <MenuItem icon={<Clock size={20} />} label={t('cooking_history')} count={safeStats.cooked} onClick={() => navigate('/history')} />
+                <MenuItem icon={<Bookmark size={20} />} label={t('saved_recipes')} count={stats.saved} onClick={() => navigate('/saved')} />
+                <MenuItem icon={<Heart size={20} />} label={t('favorites')} count={stats.favorites} onClick={() => navigate('/favorites')} />
+                <MenuItem icon={<Star size={20} />} label={t('my_reviews_ratings')} count={stats.reviews} onClick={() => navigate('/reviews')} />
+                <MenuItem icon={<Clock size={20} />} label={t('cooking_history')} count={stats.cooked} onClick={() => navigate('/history')} />
             </div>
 
             {/* Recent Saved Section */}

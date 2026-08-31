@@ -7,6 +7,8 @@ import Home from './pages/Home';
 import Explore from './pages/Explore';
 import RecipeDetail from './pages/RecipeDetail';
 import Profile from './pages/Profile';
+import EditProfile from './pages/EditProfile';
+import Leaderboard from './pages/Leaderboard';
 import Auth from './pages/Auth';
 import Settings from './pages/Settings';
 import { SavedRecipes, Favorites, CookingHistory, MyReviews } from './pages/UserPages';
@@ -83,6 +85,8 @@ const AppContent = () => {
             <Route path="/history" element={<CookingHistory />} />
             <Route path="/reviews" element={<MyReviews />} />
             <Route path="/profile" element={<Profile />} />
+            <Route path="/edit-profile" element={<EditProfile />} />
+            <Route path="/leaderboard" element={<Leaderboard />} />
             <Route path="/settings" element={<Settings />} />
             <Route path="/privacy" element={<Privacy />} />
             <Route path="/terms" element={<Terms />} />
