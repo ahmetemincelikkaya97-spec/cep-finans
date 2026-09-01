@@ -271,7 +271,7 @@ const Home = () => {
                                             display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden',
                                             marginBottom: '6px', lineHeight: 1.3
                                         }}>
-                                            {recipe.title}
+                                            {language === 'en' && recipe.title_en ? recipe.title_en : recipe.title}
                                         </h3>
                                         <div style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>
                                             {recipe.time} • {recipe.calories}

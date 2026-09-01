@@ -6,10 +6,13 @@ import { ChevronLeft, Trophy, Medal } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { calculateGamification } from '../utils/gamification';
 import { useAuth } from '../context/AuthContext';
+import { useTranslation } from '../translations';
 
 const Leaderboard = () => {
     const navigate = useNavigate();
     const { user: currentUser } = useAuth();
+    const language = currentUser?.preferences?.language || localStorage.getItem('guest_lang') || 'tr';
+    const t = useTranslation(language);
     const [leaders, setLeaders] = useState([]);
     const [loading, setLoading] = useState(true);
 
@@ -25,7 +28,7 @@ const Leaderboard = () => {
                     if (gamification) {
                         usersList.push({
                             id: doc.id,
-                            name: userData.name || 'Gizemli Şef',
+                            name: userData.name || t('anonymous_chef'),
                             avatar: userData.avatar || "https://api.dicebear.com/7.x/avataaars/svg?seed=Felix",
                             xp: gamification.xp,
                             level: gamification.currentLevel,
@@ -73,20 +76,20 @@ const Leaderboard = () => {
                     <ChevronLeft size={24} color="var(--text-main)" />
                 </button>
                 <h1 style={{ fontSize: '18px', fontWeight: 800, color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <Trophy size={20} color="var(--primary)" /> Liderlik Tablosu
+                    <Trophy size={20} color="var(--primary)" /> {t('leaderboard')}
                 </h1>
                 <div style={{ width: '40px' }}></div> {/* Spacer for centering */}
             </div>
 
             <div className="container" style={{ marginTop: '20px' }}>
                 <p style={{ textAlign: 'center', fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '24px' }}>
-                    En çok tarif pişiren, yorum yapan ve favorilere ekleyen şefler. Zirveye tırman!
+                    {t('leaderboard_desc')}
                 </p>
 
                 {loading ? (
                     <div style={{ textAlign: 'center', padding: '40px', color: 'var(--text-secondary)' }}>
                         <span className="spinner" style={{ width: '30px', height: '30px', margin: '0 auto 16px', display: 'block', borderTopColor: 'var(--primary)' }}></span>
-                        Şefler sıralanıyor...
+                        {t('ranking_chefs')}
                     </div>
                 ) : (
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
@@ -128,10 +131,10 @@ const Leaderboard = () => {
                                         {/* Name and Level */}
                                         <div style={{ display: 'flex', flexDirection: 'column' }}>
                                             <span style={{ fontSize: '15px', fontWeight: 800, color: 'var(--text-main)' }}>
-                                                {leader.name} {isMe && <span style={{ fontSize: '11px', color: 'var(--primary)', fontWeight: 700 }}>(Sen)</span>}
+                                                {leader.name} {isMe && <span style={{ fontSize: '11px', color: 'var(--primary)', fontWeight: 700 }}>{t('you')}</span>}
                                             </span>
                                             <span style={{ fontSize: '12px', fontWeight: 600, color: leader.level.color }}>
-                                                {leader.level.name}
+                                                {t(leader.level.nameKey)}
                                             </span>
                                         </div>
                                     </div>

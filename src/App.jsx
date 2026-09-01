@@ -20,6 +20,7 @@ import Onboarding from './pages/Onboarding';
 import MockInterstitial from './components/MockInterstitial';
 import { AnimatePresence } from 'framer-motion';
 import { Capacitor } from '@capacitor/core';
+import { App as CapacitorApp } from '@capacitor/app';
 // Wrapper for scrolling to top
 const ScrollToTop = () => {
   const { pathname } = useLocation();
@@ -68,6 +69,50 @@ const AppContent = () => {
         localStorage.setItem('ad_click_count', clicks.toString());
     }
   }, [navigate, location.pathname]);
+
+  // Handle Android Hardware Back Button
+  const locationRef = React.useRef(location.pathname);
+  useEffect(() => {
+    locationRef.current = location.pathname;
+  }, [location.pathname]);
+
+  useEffect(() => {
+    let lastBackPress = 0;
+
+    const setupBackButton = async () => {
+      if (Capacitor.isNativePlatform()) {
+        await CapacitorApp.addListener('backButton', () => {
+          const rootPaths = ['/', '/explore', '/saved', '/profile', '/onboarding', '/auth'];
+          if (rootPaths.includes(locationRef.current)) {
+            const timeNow = new Date().getTime();
+            if (timeNow - lastBackPress < 2000) {
+              CapacitorApp.exitApp();
+            } else {
+              lastBackPress = timeNow;
+              // Simple toast
+              const toast = document.createElement('div');
+              toast.innerHTML = 'Çıkmak için tekrar basın / Press back again to exit';
+              toast.style.cssText = 'position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.8);color:white;padding:10px 20px;border-radius:20px;z-index:9999;font-size:14px;white-space:nowrap;pointer-events:none;';
+              document.body.appendChild(toast);
+              setTimeout(() => {
+                if (document.body.contains(toast)) document.body.removeChild(toast);
+              }, 2000);
+            }
+          } else {
+            navigate(-1);
+          }
+        });
+      }
+    };
+
+    setupBackButton();
+
+    return () => {
+      if (Capacitor.isNativePlatform()) {
+        CapacitorApp.removeAllListeners('backButton');
+      }
+    };
+  }, [navigate]);
 
   return (
     <>

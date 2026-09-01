@@ -247,7 +247,7 @@ const CookingMode = () => {
                     {t('well_done_title')}
                 </h2>
                 <p style={{ color: 'var(--text-secondary)', marginBottom: '32px' }}>
-                    "{recipe.title}" {t('completed_recipe')}
+                    "{language === 'en' && recipe.title_en ? recipe.title_en : recipe.title}" {t('completed_recipe')}
                 </p>
                 <button
                     onClick={() => navigate(-1)}
@@ -324,7 +324,7 @@ const CookingMode = () => {
                     fontSize: '24px', fontWeight: 800, color: 'var(--text-main)',
                     textAlign: 'center', lineHeight: 1.5
                 }}>
-                    {renderStepText(recipe.steps[currentStep])}
+                    {renderStepText((language === 'en' && recipe.steps_en ? recipe.steps_en : recipe.steps)[currentStep])}
                 </h2>
 
                 {/* Contextual Ingredients */}

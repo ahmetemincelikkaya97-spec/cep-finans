@@ -60,7 +60,7 @@ const Profile = () => {
     const { 
         stats = { cooked: 0, saved: 0, reviews: 0, favorites: 0 }, 
         xp = 0, 
-        currentLevel = { name: 'Acemi', color: '#94a3b8' }, 
+        currentLevel = { nameKey: 'level_rookie', color: '#94a3b8' }, 
         levelProgress = 0, 
         earnedBadges = [] 
     } = gamification;
@@ -119,13 +119,13 @@ const Profile = () => {
                             backgroundColor: 'var(--bg-app)', border: '1px solid var(--border-light)', color: 'var(--text-main)',
                             display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '12px'
                         }}>
-                        <Edit2 size={12} /> Profili Düzenle
+                        <Edit2 size={12} /> {t('edit_profile')}
                     </button>
 
                     {/* Level & XP Progress */}
                     <div style={{ width: '100%', maxWidth: '300px', marginTop: '20px', marginBottom: '8px' }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '14px', fontWeight: 800, marginBottom: '8px' }}>
-                            <span style={{ color: currentLevel.color }}>{currentLevel.name}</span>
+                            <span style={{ color: currentLevel.color }}>{t(currentLevel.nameKey)}</span>
                             <span style={{ color: 'var(--text-secondary)' }}>{xp} XP</span>
                         </div>
                         <div style={{ width: '100%', height: '10px', backgroundColor: 'var(--border-light)', borderRadius: '12px', overflow: 'hidden' }}>
@@ -161,7 +161,7 @@ const Profile = () => {
 
             {/* Badges Section */}
             <div className="container" style={{ marginTop: '24px' }}>
-                <h3 style={{ fontSize: '16px', fontWeight: 800, color: 'var(--text-main)', marginBottom: '12px' }}>Rozetlerim</h3>
+                <h3 style={{ fontSize: '16px', fontWeight: 800, color: 'var(--text-main)', marginBottom: '12px' }}>{t('my_badges')}</h3>
                 <div style={{ display: 'flex', gap: '16px', overflowX: 'auto', paddingBottom: '12px', scrollbarWidth: 'none' }}>
                     {earnedBadges.map((badge) => (
                         <div key={badge.id} style={{ 
@@ -178,7 +178,7 @@ const Profile = () => {
                             }}>
                                 {badge.icon}
                             </div>
-                            <span style={{ fontSize: '10px', fontWeight: 700, textAlign: 'center', color: 'var(--text-main)' }}>{badge.name}</span>
+                            <span style={{ fontSize: '10px', fontWeight: 700, textAlign: 'center', color: 'var(--text-main)' }}>{t(badge.nameKey)}</span>
                         </div>
                     ))}
                 </div>
@@ -186,7 +186,7 @@ const Profile = () => {
 
             {/* Menu Items */}
             <div className="container" style={{ marginTop: '16px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                <MenuItem icon={<Trophy size={20} color="var(--primary)" />} label="Liderlik Tablosu" onClick={() => navigate('/leaderboard')} />
+                <MenuItem icon={<Trophy size={20} color="var(--primary)" />} label={t('leaderboard')} onClick={() => navigate('/leaderboard')} />
                 <MenuItem icon={<ShoppingCart size={20} />} label={t('shopping_list')} onClick={() => navigate('/shopping-list')} />
                 <MenuItem icon={<Bookmark size={20} />} label={t('saved_recipes')} count={stats.saved} onClick={() => navigate('/saved')} />
                 <MenuItem icon={<Heart size={20} />} label={t('favorites')} count={stats.favorites} onClick={() => navigate('/favorites')} />

@@ -157,7 +157,42 @@ export const translations = {
         exit_cooking: "Pişirme modundan çıkmak istiyor musunuz?",
         well_done_title: "Ellerine Sağlık!",
         completed_recipe: "tarifini başarıyla tamamladın.",
-        take_your_time: "Acele etmeyin, keyfini çıkarın"
+        take_your_time: "Acele etmeyin, keyfini çıkarın",
+
+        // Gamification & Leaderboard
+        leaderboard: "Liderlik Tablosu",
+        leaderboard_desc: "En çok tarif pişiren, yorum yapan ve favorilere ekleyen şefler. Zirveye tırman!",
+        ranking_chefs: "Şefler sıralanıyor...",
+        you: "(Sen)",
+        my_badges: "Rozetlerim",
+        level_rookie: "Mutfak Çaylağı",
+        level_cook: "Ev Aşçısı",
+        level_skilled: "Yetenekli Şef",
+        level_master: "Mutfak Ustası",
+        level_gourmet: "Gurme Şef",
+        badge_fire_starter: "Ateşi Yakan",
+        badge_fire_starter_desc: "İlk tarifini pişirdin.",
+        badge_recipe_holic: "Tarif Kolik",
+        badge_recipe_holic_desc: "20 farklı tarif kaydettin.",
+        badge_gourmet_writer: "Gurme Yazar",
+        badge_gourmet_writer_desc: "5 tarife yorum yaptın.",
+        badge_favorite_hunter: "Favori Avcısı",
+        badge_favorite_hunter_desc: "10 tarifi favorilere ekledin.",
+        badge_kitchen_legend: "Mutfak Efsanesi",
+        badge_kitchen_legend_desc: "Toplam 30 tarif pişirdin!",
+
+        // Recipe tags
+        difficulty_easy: "Kolay",
+        difficulty_medium: "Orta",
+        difficulty_hard: "Zor",
+        min: "dk",
+        hour: "saat",
+
+        // Ads
+        sponsored: "Sponsorlu",
+        test_ad: "Test Reklamı",
+        ad_rectangle_desc: "Burası Google AdMob'un<br /> <b>Kutu Reklam (Medium Rectangle)</b><br />alanıdır. (300x250)",
+        ad_banner_desc: "Google AdMob Banner (Afiş) Alanı"
     },
     en: {
         // Nav
@@ -316,7 +351,42 @@ export const translations = {
         exit_cooking: "Do you want to exit cooking mode?",
         well_done_title: "Well Done!",
         completed_recipe: "recipe successfully completed.",
-        take_your_time: "Take your time, enjoy it"
+        take_your_time: "Take your time, enjoy it",
+
+        // Gamification & Leaderboard
+        leaderboard: "Leaderboard",
+        leaderboard_desc: "Chefs who cooked, reviewed, and favorited the most. Climb to the top!",
+        ranking_chefs: "Ranking chefs...",
+        you: "(You)",
+        my_badges: "My Badges",
+        level_rookie: "Kitchen Rookie",
+        level_cook: "Home Cook",
+        level_skilled: "Skilled Chef",
+        level_master: "Master of Kitchen",
+        level_gourmet: "Gourmet Chef",
+        badge_fire_starter: "Fire Starter",
+        badge_fire_starter_desc: "You cooked your first recipe.",
+        badge_recipe_holic: "Recipe Holic",
+        badge_recipe_holic_desc: "You saved 20 different recipes.",
+        badge_gourmet_writer: "Gourmet Writer",
+        badge_gourmet_writer_desc: "You commented on 5 recipes.",
+        badge_favorite_hunter: "Favorite Hunter",
+        badge_favorite_hunter_desc: "You added 10 recipes to favorites.",
+        badge_kitchen_legend: "Kitchen Legend",
+        badge_kitchen_legend_desc: "You cooked a total of 30 recipes!",
+
+        // Recipe tags
+        difficulty_easy: "Easy",
+        difficulty_medium: "Medium",
+        difficulty_hard: "Hard",
+        min: "min",
+        hour: "hr",
+
+        // Ads
+        sponsored: "Sponsored",
+        test_ad: "Test Ad",
+        ad_rectangle_desc: "This is Google AdMob's<br /> <b>Medium Rectangle Ad</b><br />area. (300x250)",
+        ad_banner_desc: "Google AdMob Banner Ad Area"
     }
 };
 

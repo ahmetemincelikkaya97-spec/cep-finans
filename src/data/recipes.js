@@ -912,6 +912,7 @@ export const recipes = [
     {
         id: 102,
         title: "Yayla Çorbası",
+        title_en: "Yayla Soup",
         category: "soup",
         isTraditional: true,
         image: "/images/yayla.png",
@@ -920,6 +921,7 @@ export const recipes = [
         rating: 4.8,
         calories: "150 kcal",
         description: "Anadolu'nun ferahlatıcı, yoğurtlu ve naneli klasik lezzeti.",
+        description_en: "Anatolian refreshing, yogurt and mint classic taste.",
         tags: ["Çorba", "Geleneksel", "Vejetaryen"],
         ingredients: [
             { name: "Yoğurt", amount: "2 su bardağı", icon: "🥣" },
@@ -938,7 +940,25 @@ export const recipes = [
             "Kaynayana kadar sürekli karıştırın.",
             "Üzerine tereyağında kızdırılmış naneyi dökerek servis yapın."
         ],
-        tips: "Terbiyeyi eklerken çorbayı sürekli karıştırmak ve terbiyeyi yavaş yavaş eklemek çorbanın kesilmesini önler."
+        tips: "Terbiyeyi eklerken çorbayı sürekli karıştırmak ve terbiyeyi yavaş yavaş eklemek çorbanın kesilmesini önler.",
+        ingredients_en: [
+            { name: "Yogurt", amount: "2 cups", icon: "🥣" },
+            { name: "Rice", amount: "1/2 cup", icon: "🍚" },
+            { name: "Flour", amount: "1 tbsp", icon: "🌾" },
+            { name: "Egg Yolk", amount: "1 pc", icon: "🥚" },
+            { name: "Butter", amount: "25 g", icon: "🧈" },
+            { name: "Dried Mint", amount: "1 tsp", icon: "🌿" },
+            { name: "Water", amount: "1.5 liters", icon: "💧" }
+        ],
+        steps_en: [
+            "Boil the rice in water until soft.",
+            "In a separate bowl, whisk yogurt, egg yolk, and flour until smooth.",
+            "Take some of the soup's hot water and slowly add it to the mixture to temper it (Crucial so it doesn't curdle!).",
+            "Slowly add the tempered mixture back into the pot.",
+            "Stir continuously until it boils.",
+            "Pour butter-roasted mint on top and serve."
+        ],
+        tips_en: "Continuously stirring the soup while adding the tempering mixture slowly prevents the soup from curdling."
     },
     {
         id: 103,
@@ -1519,6 +1539,7 @@ export const recipes = [
     {
         id: 213,
         title: "Beyti Kebap (Klasik Restoran Usulü)",
+        title_en: "Beyti Kebab (Classic Restaurant Style)",
         category: "kebab",
         isTraditional: true,
         image: "/images/beyti.png",
@@ -1527,6 +1548,7 @@ export const recipes = [
         rating: 5.0,
         calories: "550 kcal",
         description: "Yufkaya sarılmış özel baharatlı köftenin fırınlanıp, üzerine tereyağlı sos ve yoğurtla servis edildiği ziyafet.",
+        description_en: "A feast of specially spiced meatballs wrapped in lavash bread, baked, and served with butter sauce and yogurt.",
         tags: ["Kebap", "Geleneksel", "Fırın", "Hamur İşi"],
         ingredients: [
             { name: "Dana Kıyma", amount: "600 g", icon: "🥩" },
@@ -1544,7 +1566,24 @@ export const recipes = [
             "Önceden ısıtılmış 180°C fırında yufkalar kızarana kadar yaklaşık 15 dakika pişirin.",
             "Sos için; tereyağında salçayı kavurup sıcak su ile açın. Fırından çıkan beytinin üzerine sosu gezdirip ortasına yoğurt koyarak servis yapın."
         ],
-        tips: "Köfteleri önceden tam pişirmeyin ki fırında kurumasın. Yufkaların çıtır olması için üzerine bolca tereyağı sürmeyi unutmayın."
+        tips: "Köfteleri önceden tam pişirmeyin ki fırında kurumasın. Yufkaların çıtır olması için üzerine bolca tereyağı sürmeyi unutmayın.",
+        ingredients_en: [
+            { name: "Minced Beef", amount: "600 g", icon: "🥩" },
+            { name: "Lavash", amount: "4 pcs", icon: "🫓" },
+            { name: "Strained Yogurt", amount: "200 g", icon: "🥣" },
+            { name: "Butter", amount: "50 g", icon: "🧈" },
+            { name: "Tomato Paste", amount: "1 tbsp", icon: "🍅" },
+            { name: "Onion", amount: "1 pc (juiced)", icon: "🧅" }
+        ],
+        steps_en: [
+            "Thoroughly knead the minced meat with squeezed onion juice, salt, pepper, and cumin. Shape into long cylinders.",
+            "Slightly cook the meatballs in a pan or grill so the outside is sealed and the inside is slightly juicy.",
+            "Spread melted butter on a single layer of lavash. Place the cooked meatball on the edge and roll it tightly.",
+            "Cut the rolls diagonally into 3-4 cm wide pieces and place them on a baking tray. Spread butter over them again.",
+            "Bake in a preheated 180°C oven for about 15 minutes until the lavash is crispy.",
+            "For the sauce; sauté the tomato paste in butter and dilute with hot water. Pour the sauce over the baked beyti, add yogurt in the middle, and serve."
+        ],
+        tips_en: "Do not fully cook the meatballs beforehand so they don't dry out in the oven. Don't forget to spread plenty of butter on the lavash to make it crispy."
     },
     {
         id: 214,
@@ -1922,6 +1961,7 @@ export const recipes = [
     {
         id: 223,
         title: "Karnıyarık (Geleneksel)",
+        title_en: "Karnıyarık (Stuffed Eggplant)",
         category: "kebab",
         isTraditional: true,
         image: "/images/karniyarik.jpg",
@@ -1930,6 +1970,7 @@ export const recipes = [
         rating: 4.9,
         calories: "320 kcal",
         description: "Kızarmış patlıcanın kıymalı harçla buluşup fırınlandığı, pilav ve cacık eşliğinde Türk mutfağının vazgeçilmezi.",
+        description_en: "Fried eggplants stuffed with minced meat and baked, an indispensable classic of Turkish cuisine, best with rice and tzatziki.",
         tags: ["Et", "Patlıcan", "Fırın", "Geleneksel"],
         ingredients: [
             { name: "Kemer Patlıcan", amount: "4 adet", icon: "🍆" },
@@ -3292,6 +3333,7 @@ export const recipes = [
     {
         id: 341,
         title: "Şekerpare (Tereyağlı)",
+        title_en: "Şekerpare (With Butter)",
         category: "dessert",
         isTraditional: true,
         image: "/images/sekerpare.jpg",
@@ -3300,6 +3342,7 @@ export const recipes = [
         rating: 4.8,
         calories: "380 kcal",
         description: "Ağızda dağılan kıyır kıyır dokusu ve tam kıvamında şerbetiyle, çay saatlerinin vazgeçilmezi klasik şekerpare.",
+        description_en: "An indispensable classic dessert for tea time, with a melt-in-the-mouth texture and perfect syrup.",
         tags: ["Tatlı", "Şerbetli", "Geleneksel", "İrmikli"],
         ingredients: [
             { name: "Tereyağı (Oda Sıcaklığı)", amount: "125 g", icon: "🧈" },
@@ -6737,6 +6780,7 @@ export const recipes = [
     {
         id: 914,
         title: "Kartoffelsalat (Geleneksel Alman Patates Salatası)",
+        title_en: "Kartoffelsalat (Traditional German Potato Salad)",
         category: "de",
         isTraditional: true,
         image: "/images/Kartoffelsalat.png",
@@ -6745,6 +6789,7 @@ export const recipes = [
         rating: 4.7,
         calories: "280 kcal",
         description: "Klasik güney Alman stiliyle, sıcak et suyu ve sirke bazlı sosun patatesle bütünleştiği geleneksel lezzet.",
+        description_en: "A traditional flavor where hot broth and vinegar-based sauce integrate with potatoes in a classic southern German style.",
         tags: ["Alman", "Salata", "Patates", "Geleneksel", "Vejetaryen"],
         servings: "4 kişi",
         ingredients: [

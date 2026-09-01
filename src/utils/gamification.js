@@ -1,17 +1,17 @@
 export const LEVELS = [
-    { name: 'Mutfak Çaylağı', minXp: 0, color: '#F05528' },
-    { name: 'Ev Aşçısı', minXp: 100, color: '#3b82f6' },
-    { name: 'Yetenekli Şef', minXp: 300, color: '#8b5cf6' },
-    { name: 'Mutfak Ustası', minXp: 700, color: '#f59e0b' },
-    { name: 'Gurme Şef', minXp: 1500, color: '#ef4444' }
+    { nameKey: 'level_rookie', minXp: 0, color: '#F05528' },
+    { nameKey: 'level_cook', minXp: 100, color: '#3b82f6' },
+    { nameKey: 'level_skilled', minXp: 300, color: '#8b5cf6' },
+    { nameKey: 'level_master', minXp: 700, color: '#f59e0b' },
+    { nameKey: 'level_gourmet', minXp: 1500, color: '#ef4444' }
 ];
 
 export const BADGES = [
-    { id: 'fire_starter', name: 'Ateşi Yakan', description: 'İlk tarifini pişirdin.', icon: '🍳', condition: (stats) => stats.cooked >= 1 },
-    { id: 'collector', name: 'Tarif Kolik', description: '20 farklı tarif kaydettin.', icon: '📚', condition: (stats) => stats.saved >= 20 },
-    { id: 'critic', name: 'Gurme Yazar', description: '5 tarife yorum yaptın.', icon: '✍️', condition: (stats) => stats.reviews >= 5 },
-    { id: 'star_hunter', name: 'Favori Avcısı', description: '10 tarifi favorilere ekledin.', icon: '⭐', condition: (stats) => stats.favorites >= 10 },
-    { id: 'legend', name: 'Mutfak Efsanesi', description: 'Toplam 30 tarif pişirdin!', icon: '🔥', condition: (stats) => stats.cooked >= 30 },
+    { id: 'fire_starter', nameKey: 'badge_fire_starter', descKey: 'badge_fire_starter_desc', icon: '🍳', condition: (stats) => stats.cooked >= 1 },
+    { id: 'collector', nameKey: 'badge_recipe_holic', descKey: 'badge_recipe_holic_desc', icon: '📚', condition: (stats) => stats.saved >= 20 },
+    { id: 'critic', nameKey: 'badge_gourmet_writer', descKey: 'badge_gourmet_writer_desc', icon: '✍️', condition: (stats) => stats.reviews >= 5 },
+    { id: 'star_hunter', nameKey: 'badge_favorite_hunter', descKey: 'badge_favorite_hunter_desc', icon: '⭐', condition: (stats) => stats.favorites >= 10 },
+    { id: 'legend', nameKey: 'badge_kitchen_legend', descKey: 'badge_kitchen_legend_desc', icon: '🔥', condition: (stats) => stats.cooked >= 30 },
 ];
 
 export const calculateGamification = (user) => {

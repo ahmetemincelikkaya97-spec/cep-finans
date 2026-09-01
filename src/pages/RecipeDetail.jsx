@@ -24,6 +24,18 @@ const RecipeDetail = () => {
     const [rating, setRating] = useState(5);
     const [comment, setComment] = useState("");
 
+    const getTranslatedLevel = (level) => {
+        if (level === 'Kolay') return t('difficulty_easy');
+        if (level === 'Orta') return t('difficulty_medium');
+        if (level === 'Zor') return t('difficulty_hard');
+        return level;
+    };
+
+    const getTranslatedTime = (timeStr) => {
+        if (!timeStr) return '';
+        return timeStr.replace('dk', t('min')).replace('saat', t('hour'));
+    };
+
     const [isAdded, setIsAdded] = useState(false);
     const [showLoginWarning, setShowLoginWarning] = useState(false);
 
@@ -162,7 +174,7 @@ const RecipeDetail = () => {
                 }}>
                     <div style={{ textAlign: 'center' }}>
                         <Clock size={20} color="var(--primary)" style={{ marginBottom: 4 }} />
-                        <div style={{ fontSize: '14px', fontWeight: 700 }}>{recipe.time}</div>
+                        <div style={{ fontSize: '14px', fontWeight: 700 }}>{getTranslatedTime(recipe.time)}</div>
                         <div style={{ fontSize: '10px', color: 'var(--text-secondary)' }}>{t('preparation')}</div>
                     </div>
                     <div style={{ textAlign: 'center' }}>
@@ -170,7 +182,7 @@ const RecipeDetail = () => {
                     </div>
                     <div style={{ textAlign: 'center' }}>
                         <ChefHat size={20} color="var(--primary)" style={{ marginBottom: 4 }} />
-                        <div style={{ fontSize: '14px', fontWeight: 700 }}>{recipe.level}</div>
+                        <div style={{ fontSize: '14px', fontWeight: 700 }}>{getTranslatedLevel(recipe.level)}</div>
                         <div style={{ fontSize: '10px', color: 'var(--text-secondary)' }}>{t('level')}</div>
                     </div>
                     <div style={{ textAlign: 'center' }}>
@@ -194,10 +206,10 @@ const RecipeDetail = () => {
                     {recipe.isModern ? t('modern') : t('classic')}
                 </div>
                 <h1 style={{ fontSize: '28px', fontWeight: 800, lineHeight: 1.2, marginBottom: '12px', color: 'var(--text-main)' }}>
-                    {recipe.title}
+                    {language === 'en' && recipe.title_en ? recipe.title_en : recipe.title}
                 </h1>
                 <p style={{ color: 'var(--text-secondary)', fontSize: '15px', lineHeight: 1.6 }}>
-                    {recipe.description}
+                    {language === 'en' && recipe.description_en ? recipe.description_en : recipe.description}
                 </p>
 
                 {/* Chef's Technical Tip */}
@@ -209,7 +221,7 @@ const RecipeDetail = () => {
                         {t('chef_tip')}
                     </div>
                     <div style={{ fontSize: '14px', color: 'var(--tag-red-text)' }}>
-                        {recipe.tips || (language === 'en' ? "Ensure ingredients are fresh for authentic taste." : "Otantik bir lezzet için malzemelerin taze olmasına özen gösterin.")}
+                        {language === 'en' && recipe.tips_en ? recipe.tips_en : (recipe.tips || (language === 'en' ? "Ensure ingredients are fresh for authentic taste." : "Otantik bir lezzet için malzemelerin taze olmasına özen gösterin."))}
                     </div>
                 </div>
 
@@ -246,7 +258,7 @@ const RecipeDetail = () => {
                     </div>
 
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                        {recipe.ingredients && recipe.ingredients.map((ing, idx) => (
+                        {(language === 'en' && recipe.ingredients_en ? recipe.ingredients_en : recipe.ingredients)?.map((ing, idx) => (
                             <div key={idx} style={{
                                 display: 'flex', alignItems: 'center', justifyContent: 'space-between',
                                 padding: '12px', backgroundColor: 'var(--bg-card)', borderRadius: '12px'
@@ -269,7 +281,7 @@ const RecipeDetail = () => {
                 <div style={{ marginTop: '32px' }}>
                     <h3 className="title-lg" style={{ fontSize: '20px', marginBottom: '16px', color: 'var(--text-main)' }}>{t('steps')}</h3>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-                        {recipe.steps && recipe.steps.map((step, idx) => (
+                        {(language === 'en' && recipe.steps_en ? recipe.steps_en : recipe.steps)?.map((step, idx) => (
                             <div key={idx} style={{ display: 'flex', gap: '16px' }}>
                                 <div style={{
                                     width: '32px', height: '32px', borderRadius: '50%',

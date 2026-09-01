@@ -1,9 +1,26 @@
 import React from 'react';
 import { Clock, BarChart2, Heart, Star, MessageCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+import { useTranslation } from '../translations';
 
 const RecipeCard = ({ recipe, variant = 'vertical', showCountryBadge = false }) => {
     const isHorizontal = variant === 'horizontal';
+    const { user } = useAuth();
+    const language = user?.preferences?.language || localStorage.getItem('guest_lang') || 'tr';
+    const t = useTranslation(language);
+
+    const getTranslatedLevel = (level) => {
+        if (level === 'Kolay') return t('difficulty_easy');
+        if (level === 'Orta') return t('difficulty_medium');
+        if (level === 'Zor') return t('difficulty_hard');
+        return level;
+    };
+
+    const getTranslatedTime = (timeStr) => {
+        if (!timeStr) return '';
+        return timeStr.replace('dk', t('min')).replace('saat', t('hour'));
+    };
 
     const getCountryName = (cat) => {
         const countries = {
@@ -120,7 +137,7 @@ const RecipeCard = ({ recipe, variant = 'vertical', showCountryBadge = false }) 
                             lineHeight: '1.3',
                             minHeight: '38px' // Eşit hizalama için min-height
                         }}>
-                            {recipe.title}
+                            {language === 'en' && recipe.title_en ? recipe.title_en : recipe.title}
                         </h3>
 
                         {/* Açıklama */}
@@ -135,19 +152,19 @@ const RecipeCard = ({ recipe, variant = 'vertical', showCountryBadge = false }) 
                             lineHeight: '1.4',
                             height: '34px' // Fixed height for 2 lines approx to ensure alignment
                         }}>
-                            {recipe.description}
+                            {language === 'en' && recipe.description_en ? recipe.description_en : recipe.description}
                         </p>
 
                         {/* Meta Bilgiler (Süre ve Zorluk) */}
                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '2px', flexWrap: 'wrap' }}>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '3px', fontSize: '11px', color: 'var(--text-secondary)' }}>
                                 <Clock size={12} />
-                                <span>{recipe.time}</span>
+                                <span>{getTranslatedTime(recipe.time)}</span>
                             </div>
                             {recipe.level && (
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '3px', fontSize: '11px', color: 'var(--text-secondary)' }}>
                                     <BarChart2 size={12} />
-                                    <span>{recipe.level}</span>
+                                    <span>{getTranslatedLevel(recipe.level)}</span>
                                 </div>
                             )}
                         </div>
