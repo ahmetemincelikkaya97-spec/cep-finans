@@ -17,6 +17,7 @@
     "@capacitor/cli": "^8.4.0",
     "@capacitor/core": "^8.4.0",
     "@capacitor/ios": "^8.4.0",
+    "@capacitor/local-notifications": "^8.3.1",
     "firebase": "^12.14.0",
     "framer-motion": "^12.29.2",
     "lucide-react": "^0.563.0",

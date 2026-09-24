@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { NotificationService } from './services/NotificationService';
 import { BrowserRouter as Router, Routes, Route, useLocation, useNavigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { ShoppingListProvider } from './context/ShoppingListContext';
@@ -150,7 +151,7 @@ const AppContent = () => {
 const App = () => {
   const [showSplash, setShowSplash] = React.useState(true);
 
-  // Theme and AdMob Initialization
+  // Theme, AdMob and Notification Initialization
   useEffect(() => {
     const initAdMob = async () => {
       if (Capacitor.isNativePlatform()) {
@@ -166,6 +167,9 @@ const App = () => {
       }
     };
     initAdMob();
+
+    // Bildirimleri zamanla (Mobil için saatler kurulur, Web için 5 saniyelik test bildirimi atılır)
+    NotificationService.scheduleMealNotifications();
 
     const savedTheme = localStorage.getItem('theme');
     const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;

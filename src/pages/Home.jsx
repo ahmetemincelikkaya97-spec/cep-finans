@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { Search, Bell, UtensilsCrossed, Sparkles } from 'lucide-react';
+import { Search, Bell, BellOff, UtensilsCrossed, Sparkles } from 'lucide-react';
 import { recipes } from '../data/recipes';
 import RecipeCard from '../components/RecipeCard';
 import { Link, useNavigate } from 'react-router-dom';
@@ -20,10 +20,33 @@ const pageTransition = {
     duration: 0.3
 };
 
+import { NotificationService } from '../services/NotificationService';
+
 const Home = () => {
     const navigate = useNavigate();
     const { user } = useAuth();
     const [searchQuery, setSearchQuery] = useState("");
+    
+    const [isNotificationsEnabled, setIsNotificationsEnabled] = useState(() => {
+        return localStorage.getItem('notificationsEnabled') !== 'false';
+    });
+    const [toastMsg, setToastMsg] = useState(null);
+
+    const toggleNotifications = async () => {
+        const newState = !isNotificationsEnabled;
+        setIsNotificationsEnabled(newState);
+        localStorage.setItem('notificationsEnabled', newState.toString());
+        
+        if (newState) {
+            await NotificationService.scheduleMealNotifications();
+            setToastMsg({ text: 'Bildirimler açıldı', icon: '🔔' });
+        } else {
+            await NotificationService.cancelAllNotifications();
+            setToastMsg({ text: 'Bildirimler kapatıldı', icon: '🔕' });
+        }
+
+        setTimeout(() => setToastMsg(null), 2500);
+    };
 
     // get lang from user or localStorage
     const language = user?.preferences?.language || localStorage.getItem('guest_lang') || 'tr';
@@ -161,13 +184,14 @@ const Home = () => {
                         </div>
                     </div>
                     <button
-                        onClick={() => navigate('/notifications')}
+                        onClick={toggleNotifications}
                         style={{
                             width: '44px', height: '44px', borderRadius: '14px', border: '1px solid var(--border-light)',
                             backgroundColor: 'var(--bg-card)', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                            color: 'var(--text-main)', boxShadow: 'var(--shadow-sm)'
+                            color: isNotificationsEnabled ? 'var(--text-main)' : 'var(--text-secondary)', boxShadow: 'var(--shadow-sm)',
+                            transition: 'all 0.2s ease'
                         }}>
-                        <Bell size={22} />
+                        {isNotificationsEnabled ? <Bell size={22} /> : <BellOff size={22} />}
                     </button>
                 </div>
             </div>
@@ -368,6 +392,30 @@ const Home = () => {
                         ))}
                     </div>
                 </div>
+            </div>
+            
+            {/* Toast Message */}
+            <div style={{
+                position: 'fixed',
+                bottom: toastMsg ? '85px' : '-60px',
+                left: '50%',
+                transform: 'translateX(-50%)',
+                backgroundColor: 'var(--bg-card)',
+                color: 'var(--text-main)',
+                padding: '12px 20px',
+                borderRadius: '20px',
+                fontSize: '14px',
+                fontWeight: 600,
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                boxShadow: 'var(--shadow-lg)',
+                border: '1px solid var(--border-light)',
+                transition: 'all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55)',
+                zIndex: 1000,
+                pointerEvents: 'none'
+            }}>
+                {toastMsg?.icon} <span>{toastMsg?.text}</span>
             </div>
         </motion.div>
     );
